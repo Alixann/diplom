@@ -1,0 +1,471 @@
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../font/Montserrat-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../font/Montserrat-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@keyframes cardEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+:root {
+    --accent-color: #00B4C4;
+    --bg-primary: #F5F5F5;
+    --bg-secondary: #FFFFFF;
+    --bg-sidebar: linear-gradient(160deg, #1f2123 0%, #18191a 100%);
+    --border-color: #e0e0e0;
+    --card-bg: #FFFFFF;
+    --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    --icon-filter: none;
+    --sidebar-light-active: rgba(0, 180, 196, 0.25);
+    --sidebar-light-bg: linear-gradient(160deg, #f5f7fa 0%, #00b4c4 100%);
+    --sidebar-light-border: rgba(0, 0, 0, 0.08);
+    --sidebar-light-hover: rgba(0, 180, 196, 0.15);
+    --sidebar-light-text: #333;
+    --text-primary: #333;
+    --text-secondary: #555;
+}
+
+/* Тёмная тема*/
+[data-theme="dark"] {
+    --bg-primary: #252729;
+    --bg-secondary: #1A1C1E;
+    --bg-sidebar: linear-gradient(160deg, #1f2123 0%, #18191a 100%);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --card-bg: #1E2022;
+    --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    --icon-filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+    --text-primary: #DDDDDD;
+    --text-secondary: #AAAAAA;
+}
+
+/* переменные для светлой темы */
+[data-theme="light"] {
+    --bg-primary: #f9fafb;
+    --bg-secondary: #ffffff;
+    --border-color: #e5e7eb;
+    --card-bg: #ffffff;
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.05);
+    --icon-filter: none;
+  --sidebar-light-bg: linear-gradient(180deg, #f0f9ff 0%, #e6f7ff 100%);
+    --sidebar-light-border: #c5e8f0;
+    --sidebar-light-text: #1a3c46;
+    --sidebar-light-hover: rgba(0, 149, 168, 0.1);
+    --sidebar-light-active: rgba(0, 149, 168, 0.2);
+    --sidebar-accent: #0095a8;
+    --sidebar-shadow: 0 0 20px rgba(0, 149, 168, 0.1);
+    --text-primary: #1f2d3d;
+    --text-secondary: #606f7b;
+}
+
+/* Общие сбросы и базовые стили */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1, h2 {
+    font-family: 'Montserrat';
+    font-weight: 400;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+button {
+    background-color: var(--accent-color);
+    padding: 10px;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+/* Контейнер основного контента */
+#main-content {
+    flex-grow: 1;
+    background-color: var(--bg-primary);
+    padding: 20px 40px;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.search-form {
+    display: flex;
+    flex: 1;
+    min-width: 200px;
+    max-width: 100%;
+}
+
+.search-form input[type="text"] {
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px 0 0 8px;
+    outline: none;
+    transition: border-color 0.3s ease;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.search-form input[type="text"]:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(0, 180, 196, 0.2);
+}
+
+.search-form .search {
+    background-color: var(--accent-color);
+    border: none;
+    border-radius: 0 8px 8px 0;
+    padding: 0 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    min-width: 50px;
+}
+
+.search-form .search:hover {
+    background-color: #0099a8;
+}
+
+
+#sidebar,
+header,
+.profile,
+input {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard {
+    animation: cardEntrance 0.6s ease-out both;
+    padding: 30px 0px;
+}
+
+
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+
+@media (max-width: 1024px) {
+    .search-form {
+        min-width: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-form {
+        max-width: 100%;
+    }
+
+    header input[type="text"] {
+        max-width: 100%;
+    }
+}
+
+header a {
+    text-decoration: none;
+    color: #DDDDDD;
+}
+
+header input[type="text"] {
+    width: 100%;
+    padding: 10px 15px;
+    max-width: 400px;
+    font-size: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    outline: none;
+    transition: border-color 0.3s ease;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+header input[type="text"]:focus {
+    border-color: #00B4C4;
+}
+
+header .profile {
+    display: flex;
+    align-items: center;
+    color: var(--text-primary);
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+header .profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="light"] header .profile img {
+    border: 2px solid rgba(0, 0, 0, 0.08);
+}
+
+header .profile span {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Переключатель темы */
+.theme-switcher {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: var(--accent-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 24px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+[data-theme="light"] header input[type="text"] {
+    background-color: var(--bg-secondary);
+    border: 1px solid rgba(0, 164, 169, 0.82);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    color: var(--text-primary);
+    padding: 12px 20px;
+    font-weight: 500;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+[data-theme="light"] header input[type="text"]:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(0, 180, 196, 0.2);
+}
+
+[data-theme="light"] header .profile {
+    color: #1e1e1e;
+}
+
+[data-theme="light"] header .profile span {
+    font-weight: 600;
+    color: #222;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .theme-switcher {
+    color: #1A1C1E;
+}
+
+/* Сайдбар */
+#wrapper {
+    display: flex;
+}
+
+#sidebar {
+    min-width: 220px;
+    height: 100vh;
+    background: var(--bg-sidebar);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    padding: 25px 0;
+    position: relative;
+}
+
+#sidebar.collapsed {
+    width: 120px;
+}
+
+#sidebar .logo {
+    text-align: center;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    margin-bottom: 40px;
+}
+
+#sidebar.collapsed .logo {
+    opacity: 0;
+    transform: translateX(-100%);
+}
+
+#sidebar .nav li {
+    padding: 0 20px;
+    margin: 8px 0;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    list-style: none;
+}
+
+#sidebar .nav li a {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+#sidebar .nav li a .icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 15px;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+#sidebar .nav li:hover a {
+    background: linear-gradient(90deg, rgba(0, 180, 196, 0.15) 0%, rgba(0, 0, 0, 0) 100%);
+    color: #00e1f4;
+    transform: translateX(10px);
+}
+
+#sidebar .nav li:hover a .icon {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 8px rgba(0, 228, 244, 0.3));
+}
+
+#sidebar .nav li.active a {
+    background: linear-gradient(90deg, rgba(0, 180, 196, 0.25) 0%, rgba(0, 0, 0, 0) 100%);
+    color: #00e1f4;
+}
+
+#sidebar .nav li.active a:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background: #00e1f4;
+    box-shadow: 0 0 15px rgba(0, 228, 244, 0.3);
+}
+
+
+/* Стили для светлой темы сайдбара */
+[data-theme="light"] #sidebar {
+    background: var(--sidebar-light-bg);
+    border-right: 1px solid rgba(85, 168, 168, 0.8);
+}
+
+[data-theme="light"] #sidebar .logo svg path {
+    fill: #1A1C1E;
+}
+
+[data-theme="light"] #sidebar .nav li a {
+    color: var(--sidebar-light-text);
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+[data-theme="light"] #sidebar .nav li:hover a {
+    background-color: var(--sidebar-light-hover);
+    color: #1A1C1E;
+    box-shadow: inset 2px 0 0 var(--accent-color);
+}
+
+[data-theme="light"] #sidebar .nav li.active a {
+    background: var(--sidebar-light-active);
+}
+
+[data-theme="light"] #sidebar .nav li a .icon {
+    filter: none;
+}
+
+[data-theme="light"] #sidebar .nav li a svg path {
+    fill: #666;
+}
+
+[data-theme="light"] #sidebar .nav li:hover a svg path {
+    fill: var(--accent-color);
+}

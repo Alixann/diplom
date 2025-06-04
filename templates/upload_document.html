@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% block title %}Загрузить документ{% endblock %}
+{% load static %}
+
+{% block main %}
+    <div class="upload-document-container">
+        <h1 class="upload-title">Загрузить документ</h1>
+
+        <form method="POST" enctype="multipart/form-data" class="upload-form">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="add">Загрузить</button>
+        </form>
+
+        <a href="{% url 'documents' %}" class="back-link">Назад к документам</a>
+    </div>
+    <style>
+        .upload-document-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #00e1f4;
+            text-align: center;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 4px rgba(0, 180, 196, 0.2);
+        }
+
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .upload-form .form-group p {
+            margin: 0 0 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .upload-form label {
+            font-size: 14px;
+            color: #bbbbbb;
+            font-weight: 500;
+        }
+
+        .upload-form input[type="text"],
+        .upload-form input[type="file"],
+        .upload-form select,
+        .upload-form textarea {
+            padding: 12px 16px;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            background: #2a2b2e;
+            color: #f1f1f1;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+        }
+
+        .upload-form input[type="file"] {
+            padding: 10px;
+            border: 2px dashed #3a3a3a;
+            background: rgba(255, 255, 255, 0.03);
+            cursor: pointer;
+        }
+
+        .upload-form input:focus,
+        .upload-form select:focus,
+        .upload-form textarea:focus {
+            border-color: #00b4c4;
+            box-shadow: 0 0 0 3px rgba(0, 180, 196, 0.2);
+            outline: none;
+        }
+
+
+        .add {
+            font-family: Montserrat;
+            display: inline-block;
+            padding: 10px 20px;
+            background: #00b4c4;
+            font-size: 16px;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            color: #888;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #00e1f4;
+        }
+
+        /* Стили для ошибок */
+        .upload-form .field-error {
+            color: #ff6b6b;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .upload-form .form-error {
+            background: rgba(231, 76, 60, 0.1);
+            border-left: 3px solid #e74c3c;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            color: #ffcccc;
+        }
+
+        /* Адаптация для мобилок */
+        @media (max-width: 768px) {
+            .upload-document-container {
+                padding: 20px;
+                margin: 15px;
+            }
+
+            .upload-title {
+                font-size: 24px;
+            }
+
+            .upload-form input,
+            .upload-form select,
+            .upload-form textarea {
+                font-size: 14px;
+            }
+
+            .upload-button {
+                padding: 12px 20px;
+                font-size: 15px;
+            }
+        }
+    </style>
+{% endblock %}

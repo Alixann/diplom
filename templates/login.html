@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% block title %}Вход{% endblock %}
+
+{% block main %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <h2 class="auth-title">Добро пожаловать</h2>
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      
+      {% if form.non_field_errors %}
+        <div class="form-error">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <div class="form-group">
+        <label for="id_username">Логин</label>
+        <div class="input-with-icon">
+          {{ form.username }}
+          <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        {% if form.username.errors %}
+          <div class="field-error">{{ form.username.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="id_password">Пароль</label>
+        <div class="input-with-icon">
+          {{ form.password }}
+          <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        {% if form.password.errors %}
+          <div class="field-error">{{ form.password.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="auth-button" >Войти</button>
+
+      <div class="auth-footer">
+        <p>Нет аккаунта? <a href="{% url 'register' %}">Создать</a></p>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  :root {
+    --bg-page: #1a1d21;
+    --bg-card: #24282d;
+    --bg-section: #2d3138;
+    --accent: #00b4c4;
+    --accent-light: rgba(0, 180, 196, 0.1);
+    --text-primary: #e6e9ec;
+    --text-secondary: #8b98a5;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --error: #e74c3c;
+    --success: #2ecc71;
+    --border-radius: 10px;
+  }
+     [data-theme="light"] .auth-card {
+         background: #ffffff;
+     }
+     [data-theme="light"] .form-group input {
+         background: #e8f1ff;
+         color: #1A1C1E;
+     }
+
+  .auth-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+
+  .auth-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    width: 100%;
+    max-width: 500px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .auth-title {
+    color: var(--accent);
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    position: relative;
+    padding-bottom: 15px;
+  }
+
+  .auth-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .form-group {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .input-with-icon {
+    position: relative;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    stroke: var(--text-secondary);
+    pointer-events: none;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    background: var(--bg-section);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 15px;
+    transition: all 0.3s ease;
+  }
+
+  .form-group input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(0, 180, 196, 0.2);
+    outline: none;
+  }
+
+  .field-error {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--error);
+    animation: shake 0.5s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+  }
+
+  .form-error {
+    background: rgba(231, 76, 60, 0.15);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    color: var(--error);
+    font-size: 14px;
+  }
+
+  .auth-button {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 400;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  
+
+  .auth-footer {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+
+  .auth-footer p {
+    margin: 10px 0;
+  }
+
+  .auth-footer a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-weight: 500;
+  }
+
+  .auth-footer a:hover {
+    color: white;
+    text-decoration: underline;
+  }
+
+  .forgot-password {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  .forgot-password:hover {
+    color: var(--accent);
+  }
+</style>
+{% endblock %}

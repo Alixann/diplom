@@ -1,0 +1,633 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Задачи{% endblock %}
+
+{% block main %}
+    <div class="document-container">
+        <div class="tasks-header">
+            <h1>Все задачи</h1>
+            <a href="{% url 'task_create' %}" class="add-document-btn">
+                Добавить задачу
+            </a>
+        </div>
+
+        <!-- Фильтры -->
+        <div class="filters">
+            <form method="get" class="filter-form">
+                <div class="filter-group">
+                    <label for="status-filter">Статус:</label>
+                    <div class="select-wrapper">
+                        <select name="status" id="status-filter" onchange="this.form.submit()">
+                            <option value="">Все статусы</option>
+                            <option value="new" {% if current_status == 'new' %}selected{% endif %}>Новая</option>
+                            <option value="in_progress" {% if current_status == 'in_progress' %}selected{% endif %}>В
+                                процессе
+                            </option>
+                            <option value="completed" {% if current_status == 'completed' %}selected{% endif %}>
+                                Завершена
+                            </option>
+                        </select>
+                        <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label for="date-filter">Дата:</label>
+                    <div class="date-wrapper">
+                        <input type="date" name="date" id="date-filter" value="{{ current_date }}"
+                               onchange="this.form.submit()">
+                        <svg class="calendar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        {% if tasks %}
+            <ul class="document-list">
+                {% for task in tasks %}
+                    <li class="document-item">
+                        <div class="status-indicator status-{{ task.status }}"></div>
+
+                        <div class="document-icon">
+                            {% if task.status == 'completed' %}
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                            {% elif task.status == 'in_progress' %}
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            {% else %}
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                            {% endif %}
+                        </div>
+
+                        <div class="document-info">
+                            <span class="document-title">{{ task.title }}</span>
+                            <div class="document-meta">
+                            <span class="task-status status-{{ task.status }}">
+                                {{ task.get_status_display }}
+                            </span>
+                                <span class="document-uploaded-at">
+                                {% if task.due_date %}
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                    {{ task.due_date|date:"d.m.Y" }}
+                                {% else %}
+                                    Без срока
+                                {% endif %}
+                            </span>
+                            </div>
+                        </div>
+
+                        <div class="document-actions">
+                            <a href="{% url 'task_detail' task.pk %}" class="action-button">
+                                Подробнее
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M5 12h14M12 5l7 7-7 7"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <p>Задач не найдено</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <style>
+        :root {
+            --bg-page: #1a1d21;
+            --bg-card: #24282d;
+            --bg-section: #2d3138;
+            --accent: #00d2e7;
+            --accent-light: rgba(0, 180, 196, 0.1);
+            --text-primary: #e6e9ec;
+            --text-secondary: #8b98a5;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --info: #3498db;
+            --border-radius: 10px;
+        }
+
+        .document-container {
+            max-width: 1200px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        .tasks-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .filters {
+            background: var(--bg-section);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .filter-form {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 220px;
+            flex: 1;
+        }
+
+        .filter-group label {
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .select-wrapper, .date-wrapper {
+            position: relative;
+        }
+
+        .select-wrapper select, .date-wrapper input {
+            width: 100%;
+            padding: 10px 15px;
+            padding-right: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            appearance: none;
+            font-size: 15px;
+        }
+
+        .select-arrow, .calendar-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            stroke: var(--text-secondary);
+        }
+
+        .no-tasks {
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .document-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 30px 0;
+        }
+
+        .document-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .document-item:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .status-indicator {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+        
+
+        .document-icon {
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(169, 169, 169, 0.05);
+        }
+
+        .status-new .document-icon {
+            background: rgba(52, 152, 219, 0.15);
+        }
+
+        .status-in_progress .document-icon {
+            background: rgba(243, 156, 18, 0.15);
+        }
+
+        .status-completed .document-icon {
+            background: rgba(46, 204, 113, 0.15);
+        }
+
+        .document-icon svg {
+            stroke: #ffffff;
+        }
+
+        .status-new .document-icon svg {
+            stroke: var(--info);
+        }
+
+        .status-in_progress .document-icon svg {
+            stroke: var(--warning);
+        }
+
+        .status-completed .document-icon svg {
+            stroke: var(--success);
+        }
+
+        .document-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .document-title {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            font-size: 16px;
+        }
+
+        .document-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .task-status {
+            font-size: 13px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            max-width: max-content;
+            font-weight: 500;
+        }
+
+        .status-new {
+            color: var(--info);
+            background: rgba(52, 152, 219, 0.15);
+        }
+
+        .status-in_progress {
+            color: var(--warning);
+            background: rgba(243, 156, 18, 0.15);
+        }
+
+        .status-completed {
+            color: var(--success);
+            background: rgba(46, 204, 113, 0.15);
+        }
+
+        .document-uploaded-at {
+            color: var(--text-secondary);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .document-actions {
+            margin-left: 15px;
+        }
+
+        .action-button {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .action-button:hover {
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .action-button svg {
+            stroke: currentColor;
+        }
+
+        .add-document-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #00b4c4;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .add-document-btn:hover {
+            background: #0095a8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 180, 196, 0.3);
+        }
+
+        .add-document-btn svg {
+            stroke: white;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            background: var(--bg-section);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .empty-state svg {
+            stroke: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .empty-state p {
+            margin: 0;
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .tasks-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filter-form {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .document-item {
+                flex-wrap: wrap;
+                padding: 15px;
+            }
+
+            .document-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                margin-top: 10px;
+            }
+
+            .document-actions {
+                margin-left: 0;
+                margin-top: 15px;
+                width: 100%;
+            }
+
+            .action-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+         [data-theme="light"] {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-section: #ffffff;
+            --border-color: #e2e8f0;
+            --accent: #0095a8;
+            --accent-light: rgba(0, 149, 168, 0.1);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --info: #3498db;
+        }
+
+        [data-theme="light"] .document-container {
+            /* фон страницы */
+            background-color: var(--bg-page);
+        }
+
+        [data-theme="light"] h1 {
+            color: var(--accent);
+        }
+
+        [data-theme="light"] h1::after {
+            background: var(--accent);
+        }
+
+        [data-theme="light"] .tasks-header {
+            /* текстовая обёртка остаётся прозрачной */
+        }
+
+        [data-theme="light"] .filters {
+            background: rgba(189, 233, 239, 0.13);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="light"] .filter-group label {
+            color: var(--text-secondary);
+        }
+
+        [data-theme="light"] .select-wrapper select,
+        [data-theme="light"] .date-wrapper input {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .select-arrow,
+        [data-theme="light"] .calendar-icon {
+            stroke: var(--text-secondary);
+        }
+
+        [data-theme="light"] .document-list {
+            /* фон списка остаётся прозрачным */
+        }
+
+        [data-theme="light"] .document-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .document-item:hover {
+            border-color: var(--accent);
+            box-shadow: 0 6px 12px rgba(0, 149, 168, 0.15);
+        }
+
+        [data-theme="light"] .status-indicator.status-new {
+            background: var(--info);
+        }
+
+        [data-theme="light"] .status-indicator.status-in_progress {
+            background: var(--warning);
+        }
+
+        [data-theme="light"] .status-indicator.status-completed {
+            background: var(--success);
+        }
+
+        [data-theme="light"] .document-icon {
+            background: rgba(169, 169, 169, 0.05);
+        }
+
+        [data-theme="light"] .status-new .document-icon {
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        [data-theme="light"] .status-in_progress .document-icon {
+            background: rgba(243, 156, 18, 0.1);
+        }
+
+        [data-theme="light"] .status-completed .document-icon {
+            background: rgba(46, 204, 113, 0.1);
+        }
+
+        [data-theme="light"] .document-icon svg {
+            stroke: var(--text-secondary);
+        }
+
+        [data-theme="light"] .status-new .document-icon svg {
+            stroke: var(--info);
+        }
+
+        [data-theme="light"] .status-in_progress .document-icon svg {
+            stroke: var(--warning);
+        }
+
+        [data-theme="light"] .status-completed .document-icon svg {
+            stroke: var(--success);
+        }
+
+        [data-theme="light"] .document-title {
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .task-status.status-new {
+            background: rgba(52, 152, 219, 0.1);
+            color: var(--info);
+        }
+
+        [data-theme="light"] .task-status.status-in_progress {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+        }
+
+        [data-theme="light"] .task-status.status-completed {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+        }
+
+        [data-theme="light"] .document-uploaded-at {
+            color: var(--text-secondary);
+        }
+
+        [data-theme="light"] .document-actions .action-button {
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+        }
+
+        [data-theme="light"] .action-button:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .add-document-btn {
+            background: var(--accent);
+            color: white;
+        }
+
+        [data-theme="light"] .add-document-btn:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 4px 10px rgba(0, 149, 168, 0.3);
+        }
+
+        [data-theme="light"] .empty-state {
+            background: rgba(189, 233, 239, 0.13);
+            border: 1px solid var(--border-color);
+        }
+
+        [data-theme="light"] .empty-state svg {
+            stroke: var(--text-secondary);
+        }
+
+        [data-theme="light"] .empty-state p {
+            color: var(--text-secondary);
+        }
+    </style>
+{% endblock %}

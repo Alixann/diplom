@@ -1,0 +1,832 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Профиль {{ user_profile.username }}{% endblock %}
+
+{% block main %}
+    <div class="profile-container">
+        <div class="profile-card">
+            <!-- Основная информация (верхний блок) -->
+            <div class="profile-main-section">
+                <div class="profile-header">
+                    <div class="avatar-container">
+                        {% if user_profile.avatar %}
+                            <img src="{{ user_profile.avatar.url }}" alt="Аватар" class="profile-avatar">
+                        {% else %}
+                            <img src="{% static 'img/default-avatar.png' %}" alt="Аватар по умолчанию"
+                                 class="profile-avatar">
+                        {% endif %}
+                        {% if user_profile.is_online %}
+                            <span class="online-status"></span>
+                        {% endif %}
+                    </div>
+
+                    <div class="profile-details">
+                        <h1 class="profile-name">{{ user_profile.first_name }} {{ user_profile.last_name }}</h1>
+                        <p class="profile-position">{{ user_profile.position|default:"Должность не указана" }}</p>
+
+                        <div class="profile-meta">
+            <span class="meta-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+              {{ user_profile.department.name|default:"Не указан" }}
+            </span>
+                            <span class="meta-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              В компании с {{ user_profile.date_joined|date:"Y" }}
+            </span>
+                        </div>
+                    </div>
+
+                    <div class="profile-actions">
+                        {% if not is_own_profile %}
+                            <a href="{% url 'chat' user_profile.username %}" class="message-button">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                Написать
+                            </a>
+                        {% endif %}
+                        {% if request.user.role.name == ROLE_ADMIN %}
+                            <form method="post" action="{% url 'toggle_role' user_profile.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="role-toggle-button">
+                                    {% if user_profile.role.name == ROLE_MANAGER %}
+                                        Назначить сотрудником
+                                    {% else %}
+                                        Назначить руководителем
+                                    {% endif %}
+                                </button>
+                            </form>
+                        {% endif %}
+
+                        {% if user.is_superuser %}
+                            <a href="{% url 'edit_user' user_profile.pk %}" class="edit-button" title="Редактировать">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Основные данные (левый блок) -->
+            <div class="profile-data-section">
+                <div class="profile-info-block">
+                    <h2 class="block-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Основная информация
+                    </h2>
+
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Email</span>
+                            <span class="info-value">{{ user_profile.email }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Телефон</span>
+                            <span class="info-value">{{ user_profile.telephone|default:"Не указан" }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Роль</span>
+                            <span class="info-value">
+    {% if user_profile.role.name == ROLE_ADMIN %}
+        <span class="role-admin">Администратор</span>
+    {% elif user_profile.role.name == ROLE_MANAGER %}
+        <span class="role-manager">Руководитель</span>
+    {% else %}
+        <span class="role-user">Сотрудник</span>
+    {% endif %}
+  </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Статус</span>
+                            <span class="info-value">
+              {% if user_profile.is_active %}
+                  <span class="active-status">Активен</span>
+              {% else %}
+                  <span class="inactive-status">Неактивен</span>
+              {% endif %}
+            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Навыки (правый верхний блок) -->
+                <div class="profile-skills-block">
+                    <h2 class="block-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                        </svg>
+                        Навыки и компетенции
+                    </h2>
+
+                    <div class="skills-container">
+                        {% for skill in user_profile.skills.all %}
+                            <div class="skill-item">
+                                <span class="skill-name">{{ skill.name }}</span>
+                                {% if skill.level %}
+                                    <div class="skill-level">
+                                        <div class="skill-level-fill" style="width: {{ skill.level }}%"></div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <div class="empty-state">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                                <span>Навыки не указаны</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Проекты (нижний блок) -->
+            <div class="profile-projects-section">
+                <h2 class="block-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                    Текущие проекты
+                </h2>
+
+                <div class="projects-grid">
+                    {% for project in user_profile.projects.all|slice:":4" %}
+                        <div class="project-card">
+                            <h3 class="project-title">{{ project.name }}</h3>
+                            <div class="project-meta">
+              <span class="project-deadline">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                До {{ project.deadline|date:"d.m.Y" }}
+              </span>
+                                <span class="project-role">{{ project.role|default:"Участник" }}</span>
+                            </div>
+                            <div class="project-progress">
+                                <div class="progress-bar" style="width: {{ project.progress }}%"></div>
+                            </div>
+                            <a href="{{ project.get_absolute_url }}" class="project-link">Подробнее →</a>
+                        </div>
+                    {% empty %}
+                        <div class="empty-state wide">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                            <span>Нет активных проектов</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* ==============================
+           Основные переменные (тёмная тема)
+           ============================== */
+        :root {
+            --bg-page: #1a1d21;
+            --bg-card: #24282d;
+            --bg-section: #2d3138;
+            --accent: #00b4c4;
+            --accent-light: rgba(0, 180, 196, 0.1);
+            --accent-lighter: rgba(0, 180, 196, 0.05);
+            --text-primary: #e6e9ec;
+            --text-secondary: #8b98a5;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-radius: 12px;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --info: #3498db;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+        }
+
+        .profile-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .profile-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Основной верхний блок */
+        .profile-main-section {
+            padding: 1.5rem;
+            background: var(--bg-section);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .profile-header {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+
+        .avatar-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .profile-avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--accent);
+            background: var(--bg-page);
+            box-shadow: 0 0 0 4px var(--accent-lighter);
+        }
+
+        .online-status {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            width: 16px;
+            height: 16px;
+            background: var(--success);
+            border-radius: 50%;
+            border: 3px solid var(--bg-section);
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-details {
+            flex-grow: 1;
+            padding-top: 0.5rem;
+        }
+
+        .profile-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .profile-position {
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin: 0 0 1.5rem 0;
+            font-weight: 500;
+        }
+
+        .profile-meta {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .meta-item svg {
+            stroke: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 1rem;
+            align-self: flex-start;
+            margin-top: 0.5rem;
+        }
+
+        .message-button {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.7rem 1.4rem;
+            background: var(--accent);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 180, 196, 0.3);
+        }
+
+        .message-button:hover {
+            background: #0095a8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 180, 196, 0.4);
+        }
+
+        .message-button svg {
+            stroke: white;
+        }
+
+        .role-toggle-button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .role-toggle-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .role-admin {
+            color: var(--warning);
+            font-weight: bold;
+        }
+
+        .role-manager {
+            color: var(--info);
+            font-weight: bold;
+        }
+
+        .role-user {
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .edit-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--accent-light);
+            color: var(--accent);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .edit-button:hover {
+            background: rgba(0, 180, 196, 0.2);
+            transform: rotate(15deg);
+        }
+
+        /* Блоки с информацией */
+        .profile-data-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2.5rem;
+        }
+
+        .profile-info-block,
+        .profile-skills-block {
+            background: var(--bg-section);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .block-title {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 1.5rem 0;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .block-title svg {
+            stroke: var(--accent);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .active-status {
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        .inactive-status {
+            color: var(--danger);
+            font-weight: 500;
+        }
+
+        /* Блок навыков */
+        .skills-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .skill-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .skill-name {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .skill-level {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .skill-level-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 3px;
+        }
+
+        /* Блок проектов */
+        .profile-projects-section {
+            padding: 0 2.5rem 2.5rem;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .project-card {
+            background: var(--bg-section);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .project-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0 0 1rem 0;
+            color: var(--text-primary);
+        }
+
+        .project-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .project-deadline {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .project-deadline svg {
+            stroke: var(--text-secondary);
+        }
+
+        .project-role {
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .project-progress {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 3px;
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .project-link:hover {
+            color: #0095a8;
+            text-decoration: underline;
+        }
+
+        /* Состояния пустых блоков */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 2rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .empty-state.wide {
+            grid-column: 1 / -1;
+        }
+
+        .empty-state svg {
+            stroke: var(--text-secondary);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1024px) {
+            .profile-data-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .profile-main-section {
+                padding: 1.5rem;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 1.5rem;
+            }
+
+            .profile-meta {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+            }
+
+            .profile-actions {
+                width: 100%;
+                justify-content: center;
+                margin-top: 1.5rem;
+            }
+
+            .profile-data-section {
+                padding: 1.5rem;
+                gap: 1.5rem;
+            }
+
+            .profile-projects-section {
+                padding: 0 1.5rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-container {
+                padding: 0 1rem;
+            }
+
+            .profile-avatar {
+                width: 120px;
+                height: 120px;
+            }
+
+            .profile-name {
+                font-size: 1.7rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ==============================
+           Переопределения для светлой темы
+           ============================== */
+        [data-theme="light"] {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-section: #eef2f6;
+            --accent: #0095a8;
+            --accent-light: rgba(0, 149, 168, 0.1);
+            --accent-lighter: rgba(0, 149, 168, 0.05);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --border-radius: 12px;
+            --success: #38b2ac;
+            --danger: #e53e3e;
+            --warning: #d69e2e;
+            --info: #3182ce;
+        }
+
+        [data-theme="light"] body {
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .profile-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="light"] .profile-main-section {
+            background: #d7ebff;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        [data-theme="light"] .profile-name {
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .profile-position {
+            color: var(--accent);
+        }
+
+        [data-theme="light"] .meta-item {
+            color: var(--text-secondary);
+        }
+
+        [data-theme="light"] .meta-item svg {
+            stroke: var(--text-secondary);
+        }
+
+        [data-theme="light"] .message-button {
+            background: var(--accent);
+            color: white;
+        }
+
+        [data-theme="light"] .message-button:hover {
+            background: var(--accent-light);
+        }
+
+        [data-theme="light"] .role-toggle-button {
+            background: var(--accent);
+            color: white;
+        }
+
+        [data-theme="light"] .role-toggle-button:hover {
+            background: var(--accent-light);
+        }
+
+        [data-theme="light"] .edit-button {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+
+        [data-theme="light"] .edit-button:hover {
+            background: rgba(0, 149, 168, 0.2);
+        }
+
+        [data-theme="light"] .profile-info-block,
+        [data-theme="light"] .profile-skills-block {
+            background: var(--bg-section);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="light"] .block-title {
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        [data-theme="light"] .block-title svg {
+            stroke: var(--accent);
+        }
+
+        [data-theme="light"] .info-label {
+            color: var(--text-secondary);
+        }
+
+        [data-theme="light"] .info-value {
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .active-status {
+            color: var(--success);
+        }
+
+        [data-theme="light"] .inactive-status {
+            color: var(--danger);
+        }
+
+        [data-theme="light"] .skills-container .skill-level {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="light"] .skill-level-fill {
+            background: var(--accent);
+        }
+
+        [data-theme="light"] .project-card {
+            background: var(--bg-section);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="light"] .project-title {
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .project-meta {
+            color: var(--text-secondary);
+        }
+
+        [data-theme="light"] .project-role {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+
+        [data-theme="light"] .progress-bar {
+            background: var(--accent);
+        }
+
+        [data-theme="light"] .project-link {
+            color: var(--accent);
+        }
+
+        [data-theme="light"] .project-link:hover {
+            color: var(--accent-light);
+        }
+
+        [data-theme="light"] .empty-state {
+            color: var(--text-secondary);
+        }
+
+        [data-theme="light"] .empty-state svg {
+            stroke: var(--text-secondary);
+        }
+    </style>
+{% endblock %}

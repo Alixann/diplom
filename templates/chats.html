@@ -1,0 +1,400 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Чаты{% endblock %}
+{% block main %}
+<div class="chats-container">
+    <h1>Мои чаты</h1>
+
+    {% if chat_users %}
+        <ul class="chat-list">
+            {% for chat in chat_users %}
+                <li class="chat-item">
+                    <a href="{% url 'chat' chat.user.username %}" class="chat-link">
+                        <div class="chat-avatar-container">
+                            {% if chat.user.avatar %}
+                                <img src="{{ chat.user.avatar.url }}" alt="Аватар" class="chat-avatar">
+                            {% else %}
+                                <img src="{% static 'img/default-avatar.png' %}" alt="Аватар" class="chat-avatar">
+                            {% endif %}
+                        </div>
+                        <div class="chat-info">
+                            <span class="chat-username">{{ chat.user.get_full_name }}</span>
+                            <div class="chat-preview">
+                                {% if chat.last_message_sender == request.user %}<strong>Вы:</strong>{% endif %}
+                                {{ chat.last_message|truncatechars:50 }}
+                            </div>
+                        </div>
+                        <div class="chat-meta">
+                            <span class="chat-time">{{ chat.timestamp|date:"H:i" }}</span>
+                            {% if chat.unread_count %}
+                                <span class="unread-badge">{{ chat.unread_count }}</span>
+                            {% endif %}
+                        </div>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="empty-chats">
+            <div class="empty-icon">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="#8b98a5">
+                    <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z"/>
+                </svg>
+            </div>
+            <h3>Нет активных чатов</h3>
+            <p>Начните новый разговор, выбрав сотрудника в поиске</p>
+            <a href="{% url 'search' %}?type=users" class="add-chat-btn">
+                Начать чат
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                    <path d="M4 4V20L20 12L4 4Z"/>
+                </svg>
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    :root {
+        --bg-page: #1a1d21;
+        --bg-card: #24282d;
+        --accent: #00b4c4;
+        --text-primary: #e6e9ec;
+        --text-secondary: #8b98a5;
+        --border-color: rgba(255, 255, 255, 0.08);
+    }
+      [data-theme="light"] {
+        --bg-page: #f8fafc;
+        --bg-card: #ffffff;
+        --accent: #0095a8;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --border-color: #e2e8f0;
+    }
+
+    [data-theme="light"] .chats-container {
+        color: var(--text-primary);
+    }
+
+    [data-theme="light"] h1 {
+        color: var(--accent);
+    }
+
+    [data-theme="light"] h1::after {
+        background: var(--accent);
+    }
+
+    [data-theme="light"] .search-chats input {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+    }
+
+    [data-theme="light"] .search-chats input::placeholder {
+        color: var(--text-secondary);
+    }
+
+    [data-theme="light"] .search-chats button {
+        background: var(--accent);
+    }
+
+    [data-theme="light"] .search-chats button:hover {
+        background: rgba(0, 149, 168, 0.8);
+    }
+
+    [data-theme="light"] .chat-link {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+    }
+
+    [data-theme="light"] .chat-link:hover {
+        background: rgba(0, 149, 168, 0.05);
+        border-color: rgba(0, 149, 168, 0.2);
+    }
+
+    [data-theme="light"] .chat-avatar {
+        border: 1px solid var(--border-color);
+    }
+
+    [data-theme="light"] .chat-username {
+        color: var(--text-primary);
+    }
+
+    [data-theme="light"] .chat-preview {
+        color: var(--text-secondary);
+    }
+
+    [data-theme="light"] .chat-time {
+        color: var(--text-secondary);
+    }
+
+    [data-theme="light"] .unread-badge {
+        background: var(--accent);
+        color: white;
+    }
+
+    [data-theme="light"] .empty-chats {
+        background:  rgba(189, 233, 239, 0.13);
+        border: 1px solid var(--border-color);
+    }
+
+    [data-theme="light"] .empty-chats h3 {
+        color: var(--text-primary);
+    }
+
+    [data-theme="light"] .empty-chats p {
+        color: var(--text-secondary);
+    }
+
+    [data-theme="light"] .empty-icon svg {
+        fill: #cbd5e1;
+    }
+
+    [data-theme="light"] .add-chat-btn {
+        background: var(--accent);
+        color: white;
+    }
+
+    [data-theme="light"] .add-chat-btn:hover {
+        background: rgba(0, 149, 168, 0.8);
+    }
+
+    /* ==============================
+       Дополнительные улучшения для светлой темы
+       ============================== */
+    [data-theme="light"] .chat-link {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    [data-theme="light"] .empty-chats {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    [data-theme="light"] .chat-preview strong {
+        color: var(--text-primary);
+    }
+
+    [data-theme="light"] .add-chat-btn svg {
+        fill: white;
+    }
+
+    .chats-container {
+        max-width: 1200px;
+        color: var(--text-primary);
+    }
+
+ h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--accent);
+        }
+
+    
+
+    .search-chats input {
+        flex: 1;
+        padding: 10px 15px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 6px 0 0 6px;
+        color: var(--text-primary);
+        font-size: 15px;
+    }
+
+    .search-chats input::placeholder {
+        color: var(--text-secondary);
+    }
+
+    .search-chats button {
+        background: var(--accent);
+        border: none;
+        padding: 0 18px;
+        border-radius: 0 6px 6px 0;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .search-chats button:hover {
+        background: rgba(0, 232, 253, 0.65);
+    }
+
+    .chat-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 30px 0;
+    }
+
+    .chat-item {
+        margin-bottom: 10px;
+    }
+
+    .chat-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.2s ease;
+    }
+
+    .chat-link:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(0, 232, 253, 0.2);
+    }
+
+    .chat-avatar-container {
+        margin-right: 15px;
+    }
+
+    .chat-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid var(--border-color);
+    }
+
+    .chat-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .chat-username {
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .chat-preview {
+        font-size: 14px;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .chat-meta {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        margin-left: 15px;
+    }
+
+    .chat-time {
+        color: var(--text-secondary);
+        font-size: 13px;
+        white-space: nowrap;
+        margin-bottom: 5px;
+    }
+
+    .unread-badge {
+        background: var(--accent);
+        color: white;
+        min-width: 24px;
+        height: 24px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: bold;
+        padding: 0 8px;
+    }
+
+    /* Empty state */
+    .empty-chats {
+        text-align: center;
+        padding: 40px 20px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+    }
+
+    .empty-icon {
+        margin-bottom: 20px;
+    }
+
+    .empty-icon svg {
+        opacity: 0.5;
+    }
+
+    .empty-chats h3 {
+        font-size: 20px;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+    }
+
+    .empty-chats p {
+        color: var(--text-secondary);
+        margin-bottom: 25px;
+    }
+
+    .add-chat-btn {
+        display: inline-flex;
+        align-items: center;
+        background: var(--accent);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        gap: 8px;
+    }
+
+    .add-chat-btn:hover {
+        background: rgba(0, 232, 253, 0.65);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .chats-container {
+            padding: 15px;
+        }
+        
+        .chat-link {
+            flex-wrap: wrap;
+        }
+        
+        .chat-meta {
+            flex-direction: row;
+            align-items: center;
+            gap: 15px;
+            margin-left: 55px;
+            margin-top: 10px;
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        h1 {
+            font-size: 20px;
+        }
+        
+        .search-chats {
+            max-width: 100%;
+        }
+        
+        .chat-avatar {
+            width: 36px;
+            height: 36px;
+        }
+    }
+</style>
+{% endblock %}

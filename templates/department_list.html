@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+{% block title %}Отделы{% endblock %}
+{% block main %}
+    <div class="departments-container">
+        <h1>Все отделы</h1>
+
+        <div class="departments-content">
+            {% if departments %}
+                <ul class="departments-list">
+                    {% for department in departments %}
+                        <li class="department-item">
+                            <a href="{% url 'department_detail' department.id %}" class="department-link">
+                                <div class="department-header">
+                                    <div class="department-info">
+                                        <div class="department-name">{{ department.name }}</div>
+                                        <div class="department-leader">
+                                            {% if department.leader %}
+                                                <div class="leader-info">
+                                                    <span class="leader-label">Руководитель</span>
+                                                    <span class="leader-name">{{ department.leader.first_name }} {{ department.leader.last_name }}</span>
+                                                </div>
+                                            {% else %}
+                                                <div class="no-leader">Руководитель не назначен</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <div class="department-meta">
+                                        <div class="meta-item">
+                                            <span>{{ department.employees|length }} сотрудник{{ department.employees|length|pluralize:"а,ов" }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="no-departments">Отделов не найдено</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <style>
+        /* ==============================
+           Основные переменные (тёмная тема)
+           ============================== */
+        :root {
+            --bg-page: #1a1d21;
+            --bg-card: #24282d;
+            --accent: #00adbc;
+            --accent-hover: #00d0e0;
+            --text-primary: #e6e9ec;
+            --text-secondary: #8b98a5;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --success: #2ecc71;
+            --transition: all 0.3s ease;
+        }
+
+        /* Контейнер страницы */
+        .departments-container {
+            max-width: 1200px;
+        }
+
+        /* Заголовок */
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        /* Контент */
+        .departments-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .departments-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .department-item {
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .department-item:last-child {
+            border-bottom: none;
+        }
+
+        .department-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .department-link {
+            display: block;
+            padding: 20px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .department-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .department-info {
+            flex: 1;
+        }
+
+        .department-name {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .department-meta {
+            display: flex;
+        }
+
+        .meta-item {
+            font-size: 0.95rem;
+            background: #00484f;
+            color: #0fe9ff;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .department-leader {
+            padding-top: 8px;
+        }
+
+        .leader-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .leader-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .leader-name {
+            font-weight: 500;
+            color: var(--accent);
+            font-size: 1.05rem;
+        }
+
+        .no-leader {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        .no-departments {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 40px 20px;
+            font-size: 1.1rem;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .departments-container {
+                padding: 15px;
+            }
+
+            .department-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .department-meta {
+                align-self: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            .department-name {
+                font-size: 1.15rem;
+            }
+
+            .leader-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+        }
+
+        /* ==============================
+           Переопределения для светлой темы
+           ============================== */
+        [data-theme="light"] {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --accent: #0095a8;           /* сохраняем акцентный цвет */
+            --accent-hover: #00778a;     /* более тёмный на 15% */
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --success: #2ecc71;
+        }
+
+        [data-theme="light"] .departments-container {
+            background-color: var(--bg-page);
+        }
+
+        [data-theme="light"] h1 {
+            color: var(--accent);
+        }
+
+        [data-theme="light"] h1::after {
+            background: var(--accent);
+        }
+
+        [data-theme="light"] .departments-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="light"] .department-item:hover {
+            background: rgba(0, 149, 168, 0.03);
+        }
+
+        [data-theme="light"] .department-link {
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .department-name {
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .leader-label,
+        [data-theme="light"] .no-leader {
+            color: var(--text-secondary);
+        }
+
+        [data-theme="light"] .leader-name {
+            color: var(--accent);
+        }
+
+        [data-theme="light"] .meta-item {
+            background: rgba(0, 149, 168, 0.1);
+            color: var(--accent);
+        }
+
+        [data-theme="light"] .no-departments {
+            color: var(--text-secondary);
+        }
+    </style>
+{% endblock %}

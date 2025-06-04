@@ -1,0 +1,866 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Профиль{% endblock %}
+
+{% block main %}
+    <h1>Мой профиль</h1>
+    <div class="profile-container">
+        <div class="profile-card">
+            <!-- Основная информация (верхний блок) -->
+            <div class="profile-main-section">
+                <div class="profile-header">
+                    <div class="avatar-container">
+                        {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}" alt="Аватар" class="profile-avatar">
+                        {% else %}
+                            <img src="{% static 'img/default-avatar.png' %}" alt="Аватар по умолчанию"
+                                 class="profile-avatar">
+                        {% endif %}
+                        {% if user.is_online %}
+                            <span class="online-status"></span>
+                        {% endif %}
+                    </div>
+
+                    <div class="profile-details">
+                        <h1 class="profile-name">{{ user.first_name }} {{ user.last_name }}</h1>
+                        <p class="profile-position">{{ user.position|default:"Должность не указана" }}</p>
+                        <div class="profile-meta">
+            <span class="meta-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+              </svg>
+                {% if user.department %}
+                    {{ user.department.name }}
+                {% else %}
+                    Отдел не указан
+                {% endif %}
+            </span>
+                            <span class="meta-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              В компании с {{ user.date_joined|date:"Y" }}
+            </span>
+                        </div>
+                    </div>
+
+                    <div class="profile-actions">
+                        <a href="{% url 'profile_edit' %}" class="edit-button" title="Редактировать">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Основные данные (левый блок) -->
+            <div class="profile-data-section">
+                <div class="profile-info-block">
+                    <h2 class="block-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Основная информация
+                    </h2>
+
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Логин</span>
+                            <span class="info-value">{{ user.username }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Email</span>
+                            <span class="info-value">{{ user.email }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Телефон</span>
+                            <span class="info-value">{{ user.telephone|default:"Не указан" }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Роль</span>
+                            <span class="info-value">
+              {% if user.is_superuser %}
+                  <span class="role-admin">Администратор</span>
+              {% else %}
+                  <span class="role-user">Сотрудник</span>
+              {% endif %}
+            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Чаты (правый блок) -->
+                <div class="profile-chats-block">
+                    <h2 class="block-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        Недавние чаты
+                    </h2>
+
+                    <div class="chats-container">
+                        {% for chat in chat_users %}
+                            <a href="{% url 'chat' chat.user.username %}" class="chat-item">
+                                <div class="chat-avatar-container">
+                                    {% if chat.user.avatar %}
+                                        <img src="{{ chat.user.avatar.url }}" alt="Аватар" class="chat-avatar">
+                                    {% else %}
+                                        <img src="{% static 'img/default-avatar.png' %}" alt="Аватар"
+                                             class="chat-avatar">
+                                    {% endif %}
+                                </div>
+                                <div class="chat-details">
+                                    <div class="chat-header">
+                                        <span class="chat-username">{{ chat.user.first_name }} {{ chat.user.last_name }}</span>
+                                        <span class="chat-time">{{ chat.timestamp|date:"H:i" }}</span>
+                                    </div>
+                                    <div class="chat-message-preview">{{ chat.last_message|truncatechars:30 }}</div>
+                                </div>
+                            </a>
+                        {% empty %}
+                            <div class="empty-state">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                <span>Нет активных чатов</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Блок "Мои задачи"  -->
+            <div class="profile-tasks-block">
+                <h2 class="block-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"></path>
+                    </svg>
+                    Мои задачи
+                </h2>
+
+                {% if tasks %}
+                    <div class="tasks-container">
+                        {% for task in tasks %}
+                            <div class="task-item">
+              <span class="task-icon">
+                {% if task.status == 'completed' %}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                {% elif task.status == 'in_progress' %}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                {% else %}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>{% endif %}
+              </span>
+                                <div class="task-info">
+                                    <span class="task-title">{{ task.title }}</span>
+                                    <span class="task-status task-status-{{ task.status }}">
+                  {{ task.get_status_display }}
+                </span>
+                                </div>
+                                <span class="task-date">
+                {% if task.due_date %}
+                    {{ task.due_date|date:"d.m.Y" }}
+                {% else %}
+                    Без срока
+                {% endif %}
+              </span>
+                                <div class="task-actions">
+                                    <a href="{% url 'task_detail' task.pk %}">Подробнее</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="no-tasks">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"></path>
+                        </svg>
+                        <span>Задач не найдено</span>
+                    </div>
+                {% endif %}
+
+                <div class="all-tasks-link">
+                    <a href="{% url 'task' %}">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                        Все задачи
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        :root {
+            --bg-page: #1a1d21;
+            --bg-card: #24282d;
+            --bg-section: #2d3138;
+            --accent: #00b4c4;
+            --accent-light: rgba(0, 180, 196, 0.1);
+            --accent-lighter: rgba(0, 180, 196, 0.05);
+            --text-primary: #e6e9ec;
+            --text-secondary: #8b98a5;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-radius: 12px;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #009d98;
+            --info: #3498db;
+        }
+
+        .profile-container {
+            max-width: 1200px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        .profile-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Основной верхний блок */
+        .profile-main-section {
+            padding: 1.5rem;
+            background: var(--bg-section);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .profile-header {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+
+        .avatar-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .profile-avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--accent);
+            background: var(--bg-page);
+            box-shadow: 0 0 0 4px var(--accent-lighter);
+        }
+
+        .online-status {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            width: 16px;
+            height: 16px;
+            background: var(--success);
+            border-radius: 50%;
+            border: 3px solid var(--bg-section);
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-details {
+            flex-grow: 1;
+            padding-top: 0.5rem;
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .profile-position {
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin: 0 0 1.5rem 0;
+            font-weight: 500;
+        }
+
+        .profile-meta {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .meta-item svg {
+            stroke: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 1rem;
+            align-self: flex-start;
+            margin-top: 0.5rem;
+        }
+
+        .edit-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--accent-light);
+            color: #00ebff;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .edit-button:hover {
+            background: rgba(0, 180, 196, 0.2);
+            transform: rotate(15deg);
+        }
+
+        .profile-data-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 1.5rem;
+        }
+
+        .profile-info-block,
+        .profile-chats-block {
+            background: var(--bg-section);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .block-title {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 1.5rem 0;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .block-title svg {
+            stroke: var(--accent);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .role-admin {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .role-user {
+            color: var(--info);
+        }
+
+        /* Блок чатов */
+        .chats-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .chat-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .chat-avatar-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+        }
+
+        .chat-details {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.3rem;
+        }
+
+        .chat-username {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-time {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .chat-message-preview {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Состояния пустых блоков */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 2rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .empty-state svg {
+            stroke: var(--text-secondary);
+            width: 40px;
+            height: 40px;
+        }
+
+        /* Стили для блока задач */
+        .profile-tasks-block {
+            background: var(--bg-section);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin: 0 1.5rem 2.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .tasks-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            transition: all 0.2s ease;
+        }
+
+        .task-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .task-icon {
+            font-size: 1.2rem;
+            width: 30px;
+            text-align: center;
+        }
+
+        .task-info {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .task-title {
+            display: block;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.3rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .task-status {
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+        
+
+        .task-date {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            min-width: 100px;
+            text-align: right;
+        }
+
+        .task-actions a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+        }
+
+        .task-actions a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .no-tasks {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 2rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .no-tasks svg {
+            stroke: var(--text-secondary);
+            width: 40px;
+            height: 40px;
+        }
+
+        .all-tasks-link {
+            text-align: right;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+        }
+
+        .all-tasks-link a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .all-tasks-link a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        [data-theme="light"] {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-section: #f1f5f9;
+            --accent: #0095a8;
+            --accent-light: rgba(0, 149, 168, 0.1);
+            --accent-lighter: rgba(0, 149, 168, 0.05);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+        }
+
+        [data-theme="light"] h1 {
+            color: #1e293b;
+        }
+
+        [data-theme="light"] h1::after {
+            background: var(--accent);
+        }
+
+        [data-theme="light"] .profile-card {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            border-color: var(--border-color);
+        }
+
+        [data-theme="light"] .profile-main-section {
+            background: #d7ebff;
+            border-bottom-color: var(--border-color);
+        }
+
+        [data-theme="light"] .profile-avatar {
+            border-color: var(--accent);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(0, 149, 168, 0.1);
+        }
+
+        [data-theme="light"] .profile-name {
+            color: #1e293b;
+        }
+
+        [data-theme="light"] .profile-position {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        [data-theme="light"] .meta-item {
+            color: #475569;
+        }
+
+        [data-theme="light"] .meta-item svg {
+            stroke: #94a3b8;
+        }
+
+        [data-theme="light"] .edit-button {
+            background: rgba(0, 149, 168, 0.1);
+            color: var(--accent);
+        }
+
+        [data-theme="light"] .edit-button:hover {
+            background: rgba(0, 149, 168, 0.2);
+        }
+
+        [data-theme="light"] .profile-info-block,
+        [data-theme="light"] .profile-chats-block,
+        [data-theme="light"] .profile-tasks-block {
+            background: rgba(189, 233, 239, 0.13);
+            border-color: var(--border-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        [data-theme="light"] .block-title {
+            color: #1e293b;
+            border-bottom-color: var(--border-color);
+        }
+
+        [data-theme="light"] .block-title svg {
+            stroke: var(--accent);
+        }
+
+        [data-theme="light"] .info-label {
+            color: #64748b;
+        }
+
+        [data-theme="light"] .info-value {
+            color: #1e293b;
+        }
+
+        [data-theme="light"] .role-admin {
+            color: var(--accent);
+        }
+
+        [data-theme="light"] .chat-item {
+            border: 1px solid var(--border-color);
+            background: #f8fafc;
+        }
+
+        [data-theme="light"] .chat-item:hover {
+            background: rgba(0, 149, 168, 0.05);
+            border-color: rgba(0, 149, 168, 0.3);
+        }
+
+        [data-theme="light"] .chat-avatar {
+            border-color: var(--accent);
+        }
+
+        [data-theme="light"] .chat-username {
+            color: #1e293b;
+        }
+
+        [data-theme="light"] .chat-message-preview {
+            color: #64748b;
+        }
+
+        [data-theme="light"] .task-item {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+        }
+
+        [data-theme="light"] .task-item:hover {
+            background: rgba(0, 149, 168, 0.05);
+            border-color: rgba(0, 149, 168, 0.3);
+        }
+
+        [data-theme="light"] .task-title {
+            color: #1e293b;
+        }
+
+        [data-theme="light"] .task-status-new {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        [data-theme="light"] .task-status-in_progress {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        [data-theme="light"] .task-status-completed {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        [data-theme="light"] .empty-state,
+        [data-theme="light"] .no-tasks {
+            color: #94a3b8;
+        }
+
+        [data-theme="light"] .empty-state svg,
+        [data-theme="light"] .no-tasks svg {
+            stroke: #cbd5e1;
+        }
+
+        [data-theme="light"] .all-tasks-link {
+            border-top-color: var(--border-color);
+        }
+
+        [data-theme="light"] .all-tasks-link a {
+            color: var(--accent);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1024px) {
+            .profile-data-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .profile-main-section {
+                padding: 1.5rem;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 1.5rem;
+            }
+
+            .profile-meta {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+            }
+
+            .profile-actions {
+                width: 100%;
+                justify-content: center;
+                margin-top: 1.5rem;
+            }
+
+            .profile-data-section {
+                padding: 1.5rem;
+                gap: 1.5rem;
+            }
+
+            .profile-avatar {
+                width: 120px;
+                height: 120px;
+            }
+
+            .profile-tasks-block {
+                margin: 0 1.5rem 1.5rem;
+            }
+
+            .task-item {
+                flex-wrap: wrap;
+            }
+
+            .task-date {
+                text-align: left;
+                min-width: auto;
+                margin-left: 46px; /* выравнивание с иконкой */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-container {
+                padding: 0;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+{% endblock %}

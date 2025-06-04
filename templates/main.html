@@ -1,0 +1,587 @@
+{% extends 'base.html' %}
+{% block title %}Главная{% endblock %}
+{% load static %}
+
+{% block main %}
+    <div class="dashboard-container">
+        <div class="welcome-container">
+            <h1 class="welcome-title">Добро пожаловать, {{ user.first_name }}!</h1>
+            <p class="subheading">Панель управления</p>
+        </div>
+
+        {% if is_manager %}
+            <div class="manager-block">
+                <div class="manager-header">
+                    <h2 class="manager-title">Управление отделом</h2>
+                    <span class="department-name">{{ manager_department.name }}</span>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-green">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Сотрудников</h3>
+                            <p>{{ dept_employee_count }}</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-purple">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Всего задач</h3>
+                            <p>{{ dept_task_count }}</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-orange">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Новые</h3>
+                            <p>{{ dept_new_tasks }}</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-blue">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3>В работе</h3>
+                            <p>{{ dept_in_progress_tasks }}</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-green">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <polyline points="9 11 12 14 22 4"></polyline>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Завершено</h3>
+                            <p>{{ dept_completed_tasks }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="manager-footer">
+                    <a href="{% url 'department_detail' manager_department.id %}" class="action-button">
+                        Управление отделом →
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if is_admin %}
+            <div class="admin-departments">
+                <div class="admin-header">
+                    <h2 class="admin-title">Статистика по отделам</h2>
+                    <p class="admin-subtitle">Всего отделов: {{ department_stats|length }}</p>
+                </div>
+                <div class="department-grid">
+                    {% for dept in department_stats %}
+                        <a href="{% url 'department_detail' dept.id %}" class="department-card">
+                            <div class="department-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                     stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <path d="M16 13H8"></path>
+                                    <path d="M16 17H8"></path>
+                                    <path d="M10 9H9H8"></path>
+                                </svg>
+                            </div>
+                            <div class="department-content">
+                                <h3 class="department-name">{{ dept.name }}</h3>
+                                <p class="department-manager">{{ dept.manager }}</p>
+                                <div class="department-stats">
+                                    <span class="stat-badge">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                             stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                        </svg>
+                                        {{ dept.task_count }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="department-cta">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                     stroke-linejoin="round">
+                                    <path d="M5 12h14"></path>
+                                    <path d="M12 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <style>
+        :root {
+            --dark-bg: #121212;
+            --card-bg: #1e1f22;
+            --card-border: #2c2f33;
+            --accent: #00ebff;
+            --accent-hover: #0095a8;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --divider: #2c2f33;
+            --green: #63c08a;
+            --purple: #5f9698;
+            --orange: #ffca77;
+            --blue: #00c490;
+            --department-accent: #00959d;
+        }
+
+        .bg-blue {
+            background: linear-gradient(135deg, var(--blue), #008c9e);
+        }
+
+        .bg-green {
+            background: linear-gradient(135deg, var(--blue), #008c9e);
+        }
+
+        .bg-purple {
+            background: linear-gradient(135deg, var(--blue), #008c9e);
+        }
+
+        .bg-orange {
+            background: linear-gradient(135deg, var(--blue), #008c9e);
+        }
+
+        .dashboard-container {
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .welcome-container {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .subheading {
+            font-size: 16px;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-top: 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-bottom: 35px;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-color: #3a3d42;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .stat-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: white;
+        }
+
+        .stat-info h3 {
+            font-size: 16px;
+            margin: 0 0 5px;
+            color: var(--text-secondary);
+        }
+
+        .stat-info p {
+            font-size: 24px;
+            margin: 0;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Manager block styles */
+        .manager-block {
+            padding: 0;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 30px;
+        }
+
+        .manager-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--divider);
+        }
+
+        .manager-title {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .manager-header .department-name {
+            font-size: 22px;
+            color: var(--accent);
+            font-weight: 600;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .manager-footer {
+            padding: 20px 25px;
+            border-top: 1px solid var(--divider);
+            background-color: rgba(0, 0, 0, 0.1);
+            text-align: right;
+        }
+
+        .action-button {
+            background-color: transparent;
+            color: var(--accent);
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--accent);
+        }
+
+        .action-button:hover {
+            background-color: rgba(0, 180, 196, 0.1);
+        }
+
+        /* Admin block styles */
+        .admin-departments {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .admin-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--divider);
+        }
+
+        .admin-title {
+            font-size: 18px;
+            color: var(--text-primary);
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .admin-subtitle {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-top: 5px;
+            margin-bottom: 0;
+        }
+
+        .department-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 25px;
+        }
+
+        .department-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            transition: all 0.3s ease;
+            border: 1px solid var(--card-border);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .department-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            border-color: var(--department-accent);
+            background-color: rgba(255, 255, 255, 0.07);
+        }
+
+        .department-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: rgba(95, 150, 152, 0.15);
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .department-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--department-accent);
+        }
+
+        .department-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .department-name {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 5px;
+        }
+
+        .department-manager {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin: 0 0 12px;
+        }
+
+        .department-stats {
+            display: flex;
+            gap: 10px;
+        }
+
+        .stat-badge {
+            background: rgba(95, 150, 152, 0.15);
+            color: var(--department-accent);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-badge svg {
+            stroke: var(--department-accent);
+        }
+
+        .department-cta {
+            align-self: center;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .department-card:hover .department-cta {
+            color: var(--department-accent);
+        }
+
+        /* Light theme styles */
+        [data-theme="light"] {
+            --dark-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --accent: #0095a8;
+            --accent-hover: #00778a;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --divider: #e2e8f0;
+            --green: #38b2ac;
+            --purple: #5f9698;
+            --orange: #ed8936;
+            --blue: #4299e1;
+            --department-accent: #0095a8;
+        }
+
+        [data-theme="light"] .dashboard-container {
+            background-color: var(--dark-bg);
+        }
+
+        [data-theme="light"] .welcome-container,
+        [data-theme="light"] .stat-card,
+        [data-theme="light"] .admin-departments,
+        [data-theme="light"] .manager-block {
+            background-color: rgba(189, 233, 239, 0.13);
+            border-color: var(--card-border);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="light"] .welcome-title {
+            color: var(--accent);
+        }
+
+        [data-theme="light"] .stat-icon.bg-blue {
+            background: rgb(0, 149, 168);
+        }
+
+        [data-theme="light"] .stat-card:hover,
+        [data-theme="light"] .department-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 6px 12px rgba(0, 149, 168, 0.15);
+        }
+
+        [data-theme="light"] .department-icon {
+            background: rgba(0, 149, 168, 0.1);
+        }
+
+        [data-theme="light"] .department-icon svg {
+            stroke: var(--accent);
+        }
+
+        [data-theme="light"] .stat-badge {
+            background: rgba(0, 149, 168, 0.1);
+            color: var(--accent);
+        }
+
+        [data-theme="light"] .stat-badge svg {
+            stroke: var(--accent);
+        }
+
+        [data-theme="light"] .department-card:hover {
+            background-color: rgba(0, 149, 168, 0.03);
+        }
+
+        [data-theme="light"] .department-card {
+            background-color: #ffffff;
+        }
+
+        [data-theme="light"] .department-cta {
+            color: var(--text-secondary);
+        }
+
+        [data-theme="light"] .department-card:hover .department-cta {
+            color: var(--accent);
+        }
+
+        [data-theme="light"] .manager-title,
+        [data-theme="light"] .admin-title {
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .department-name {
+            color: #424242;
+            font-weight: 600;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 1024px) {
+            .department-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-container {
+                padding: 25px 20px;
+            }
+
+            .welcome-title {
+                font-size: 28px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 15px;
+            }
+
+            .department-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-container {
+                padding: 15px;
+            }
+
+            .welcome-title {
+                font-size: 24px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .department-card {
+                flex-direction: column;
+            }
+
+            .department-icon {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+
+            .department-cta {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,478 @@
+{% extends 'base.html' %}
+{% block title %}{{ department.name }}{% endblock %}
+{% block main %}
+    <div class="department-page">
+        <div class="department-header">
+            <h2 class="department-title">{{ department.name }}</h2>
+            <p class="department-description">{{ department.description }}</p>
+            <div class="department-meta">
+                <div class="meta-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                    </svg>
+                    <span>{{ employees|length }} сотрудник{{ employees|length|pluralize:"а,ов" }}</span>
+                </div>
+
+                <div class="meta-item leader-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <path d="M17 11l2 2 4-4"></path>
+                    </svg>
+                    <span>
+                        {% with department.get_leader as leader %}
+                            {% if leader %}
+                                Руководитель:
+                                <a href="{% url 'user_profile' leader.username %}">
+                                    <strong>{{ leader.first_name }} {{ leader.last_name }}</strong>
+                                </a>
+                            {% else %}
+                                Руководитель не назначен
+                            {% endif %}
+                        {% endwith %}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="employee-section">
+            <h3 class="employee-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                </svg>
+                Сотрудники
+            </h3>
+
+            {% if employees %}
+                <div class="employee-list">
+                    {% for employee in employees %}
+                        <a href="{% url 'user_profile' employee.username %}" class="employee-row">
+                            <div class="employee-info">
+                                <div class="employee-name">{{ employee.first_name }} {{ employee.last_name }}</div>
+                                <div class="employee-position">{{ employee.position }}</div>
+                            </div>
+                            <div class="employee-arrow">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M9 18l6-6-6-6"></path>
+                                </svg>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-employees">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                    </svg>
+                    <p>Нет сотрудников в этом отделе</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <style>
+        /* ==============================
+           Основные переменные (тёмная тема)
+           ============================== */
+        :root {
+            --bg-page: #1a1d21;
+            --bg-card: #24282d;
+            --bg-section: #2d3138;
+            --accent: rgba(0, 229, 255, 0.56);
+            --accent-hover: #00d0e0;
+            --text-primary: #e6e9ec;
+            --text-secondary: #8b98a5;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Контейнер страницы */
+        .department-page {
+            color: var(--text-primary);
+            max-width: 1200px;
+        }
+
+        /* Заголовок отдела */
+        .department-header {
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: var(--bg-section);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .department-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), #5d69e6);
+        }
+
+        .department-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0 0 0.8rem 0;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .department-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 800px;
+            margin-bottom: 1.5rem;
+        }
+
+        .department-meta {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.7rem 1.2rem;
+            border-radius: 20px;
+        }
+
+        .meta-item svg {
+            stroke: var(--accent);
+        }
+
+        /* Стили для блока руководителя */
+        .leader-item {
+            background: rgba(0, 180, 196, 0.15) !important;
+            border: 1px solid rgba(0, 180, 196, 0.3) !important;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .leader-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(0, 180, 196, 0.1) 50%,
+                transparent 100%
+            );
+            background-size: 200% 100%;
+            animation: leader-shine 3s infinite;
+            z-index: 0;
+            opacity: 0.6;
+            border-radius: 20px;
+            pointer-events: none;
+        }
+
+        .leader-item svg {
+            stroke: var(--accent) !important;
+            z-index: 1;
+        }
+
+        .leader-item strong {
+            color: var(--accent-hover);
+            font-weight: 600;
+        }
+
+        @keyframes leader-shine {
+            0% {
+                background-position: -150% 0;
+            }
+            60% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        /* Блок сотрудников */
+        .employee-section {
+            background: var(--bg-section);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .employee-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            padding: 1.5rem 2rem;
+            background: rgba(0, 180, 196, 0.05);
+            border-bottom: 1px solid var(--border-color);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .employee-title svg {
+            stroke: var(--accent);
+        }
+
+        .employee-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .employee-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 2rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .employee-row:last-child {
+            border-bottom: none;
+        }
+
+        .employee-row:hover {
+            background: rgba(255, 255, 255, 0.03);
+            transform: translateX(5px);
+        }
+
+        .employee-info {
+            flex-grow: 1;
+        }
+
+        .employee-name {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+            color: var(--text-primary);
+        }
+
+        .employee-position {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .employee-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+        }
+
+        .employee-row:hover .employee-arrow {
+            background: var(--accent);
+            transform: rotate(-90deg);
+        }
+
+        .employee-row:hover .employee-arrow svg {
+            stroke: white;
+        }
+
+        .no-employees {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .no-employees svg {
+            stroke: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .no-employees p {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .department-page {
+                padding: 15px;
+            }
+
+            .department-header {
+                padding: 1.5rem;
+            }
+
+            .department-meta {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .meta-item {
+                width: 100%;
+            }
+
+            .employee-title {
+                padding: 1.2rem 1.5rem;
+            }
+
+            .employee-row {
+                padding: 1rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .department-title {
+                font-size: 1.5rem;
+            }
+
+            .department-description {
+                font-size: 1rem;
+            }
+
+            .employee-title {
+                font-size: 1.2rem;
+            }
+
+            .leader-item strong {
+                display: block;
+                margin-top: 4px;
+            }
+        }
+
+        /* ==============================
+           Переопределения для светлой темы
+           ============================== */
+        [data-theme="light"] {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-section: #ffffff;
+            --accent: #0095a8;           /* сохраняем акцент */
+            --accent-hover: #00778a;     /* на 15% темнее */
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="light"] .department-page {
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .department-header {
+            background: var(--bg-section);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="light"] .department-header::before {
+            background: linear-gradient(90deg, var(--accent), #5d69e6);
+        }
+
+        [data-theme="light"] .department-title {
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .department-description {
+            color: var(--text-secondary);
+        }
+
+        [data-theme="light"] .meta-item {
+            background: rgba(0, 149, 168, 0.1);
+            color: var(--text-secondary);
+        }
+
+        [data-theme="light"] .meta-item svg {
+            stroke: var(--accent);
+        }
+
+        [data-theme="light"] .leader-item {
+            background: rgba(0, 149, 168, 0.1) !important;
+            border: 1px solid rgba(0, 149, 168, 0.3) !important;
+        }
+
+        [data-theme="light"] .leader-item svg {
+            stroke: var(--accent) !important;
+        }
+
+        [data-theme="light"] .leader-item strong {
+            color: var(--accent-hover);
+        }
+
+        [data-theme="light"] .employee-section {
+            background: var(--bg-section);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="light"] .employee-title {
+            background: rgba(0, 149, 168, 0.05);
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        [data-theme="light"] .employee-title svg {
+            stroke: var(--accent);
+        }
+
+        [data-theme="light"] .employee-row {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .employee-row:hover {
+            background: rgba(0, 149, 168, 0.03);
+        }
+
+        [data-theme="light"] .employee-name {
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .employee-position {
+            color: var(--text-secondary);
+        }
+
+        [data-theme="light"] .employee-arrow {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        [data-theme="light"] .employee-row:hover .employee-arrow {
+            background: var(--accent);
+        }
+
+        [data-theme="light"] .employee-row:hover .employee-arrow svg {
+            stroke: white;
+        }
+
+        [data-theme="light"] .no-employees {
+            color: var(--text-secondary);
+        }
+
+        [data-theme="light"] .no-employees svg {
+            stroke: var(--text-secondary);
+        }
+
+        [data-theme="light"] .no-employees p {
+            color: var(--text-secondary);
+        }
+    </style>
+{% endblock %}
