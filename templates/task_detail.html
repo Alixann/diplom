@@ -51,7 +51,6 @@
                 {% endif %}
             </div>
 
-            <!-- Правая колонка: действия и комментарии (шире) -->
             <div class="task-actions">
                 {% if task.status != 'completed' %}
                     <div class="status-change">
@@ -76,7 +75,6 @@
                     </div>
                 {% endif %}
 
-                <!-- Форма для завершения задачи -->
                 {% if task.status == 'completed' or form %}
                     <div class="completion-section">
                         <h3>{% if task.status == 'completed' %}Задача завершена{% else %}Завершение задачи{% endif %}</h3>
@@ -135,9 +133,7 @@
     </div>
 
     <style>
-        /* ==============================
-           Основные переменные (тёмная тема)
-           ============================== */
+
         :root {
             --bg-page: #1a1d21;
             --bg-card: #24282d;
