@@ -13,6 +13,10 @@
                     </svg>
                     <span>{{ employees|length }} сотрудник{{ employees|length|pluralize:"а,ов" }}</span>
                 </div>
+            <div class="meta-item">
+                            <h3>Всего задач</h3>
+                            <p>{{ dept_task_count }}</p>
+                        </div>
 
                 <div class="meta-item leader-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -143,7 +147,7 @@
             align-items: center;
             gap: 0.7rem;
             font-size: 0.95rem;
-            color: var(--text-secondary);
+            color: #d4d4d4;
             background: rgba(255, 255, 255, 0.05);
             padding: 0.7rem 1.2rem;
             border-radius: 20px;

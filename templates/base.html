@@ -8,10 +8,8 @@
 </head>
 <body>
 <div id="wrapper">
-    <!-- Сайдбар -->
     <div id="sidebar" class="expanded">
         <div class="logo">
-            <!-- Логотип -->
             <svg width="127" height="37" viewBox="0 0 127 37" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="6.68421" cy="6.68421" r="6.68421" transform="matrix(0 -1 -1 0 102.491 13.3684)"
                         fill="#00B4C4"/>
@@ -87,12 +85,9 @@
                     <span id="themeLabel">Тёмная</span>
                 </div>
             </li>
-
         </ul>
-
     </div>
 
-    <!-- Основной контент -->
     <div id="main-content">
         <header>
             <form method="GET" action="{% url 'search' %}" class="search-form">
@@ -138,9 +133,6 @@
 </div>
 
 <script>
-
-
-    // Функция переключения темы
     function toggleTheme() {
         const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -153,19 +145,49 @@
             newTheme === 'dark' ? 'Тёмная' : 'Светлая';
     }
 
-    // Инициализация темы
     document.addEventListener('DOMContentLoaded', () => {
         const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
 
-        // Устанавливаем начальный текст
         document.getElementById('themeLabel').textContent =
             savedTheme === 'dark' ? 'Тёмная' : 'Светлая';
 
-        // Обработчик переключателя
         document.getElementById('themeToggle').addEventListener('change', toggleTheme);
     });
 
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggleBtn = document.querySelector('.sidebar-toggle-btn');
+        const body = document.body;
+
+        // Обработчик клика по кнопке
+        if (sidebarToggleBtn) {
+            sidebarToggleBtn.addEventListener('click', function () {
+                sidebar.classList.toggle('mobile-visible');
+                body.classList.toggle('sidebar-open');
+            });
+        }
+
+        // Закрытие сайдбара при клике вне его области
+        document.addEventListener('click', function (event) {
+            const isSidebarClick = sidebar.contains(event.target);
+            const isButtonClick = event.target.closest('.sidebar-toggle-btn');
+
+            if (!isSidebarClick && !isButtonClick && sidebar.classList.contains('mobile-visible')) {
+                sidebar.classList.remove('mobile-visible');
+                body.classList.remove('sidebar-open');
+            }
+        });
+
+        // Автоматическое закрытие при ресайзе
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 768 && body.classList.contains('sidebar-open')) {
+                sidebar.classList.remove('mobile-visible');
+                body.classList.remove('sidebar-open');
+            }
+        });
+    });
 </script>
 </body>
 </html>

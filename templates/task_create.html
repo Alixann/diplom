@@ -14,10 +14,19 @@
                 <label for="{{ form.description.id_for_label }}">Описание:</label>
                 {{ form.description }}
             </div>
+
+            {% if form.department %}
+                <div class="form-group">
+                    <label for="{{ form.department.id_for_label }}">Отдел:</label>
+                    {{ form.department }}
+                </div>
+            {% endif %}
+
             <div class="form-group">
                 <label for="{{ form.user.id_for_label }}">Назначить на:</label>
                 {{ form.user }}
             </div>
+
             <div class="form-row">
                 <div class="form-group">
                     <label for="{{ form.due_date.id_for_label }}">Дата выполнения:</label>
@@ -89,7 +98,9 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             width: 100%;
         }
-
+textarea {
+    max-height: 100px;
+}
         input:focus,
         select:focus,
         textarea:focus {
@@ -135,45 +146,68 @@
                 flex-direction: column;
             }
         }
+
         [data-theme="light"] .form-container {
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-}
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
 
-[data-theme="light"] .form-title {
-  color: #007c91;
-  text-shadow: none;
-}
+        [data-theme="light"] .form-title {
+            color: #007c91;
+            text-shadow: none;
+        }
 
-[data-theme="light"] label {
-  color: #333;
-}
+        [data-theme="light"] label {
+            color: #333;
+        }
 
-[data-theme="light"] input[type="text"],
-[data-theme="light"] input[type="date"],
-[data-theme="light"] select,
-[data-theme="light"] textarea {
-  background: #fff;
-  color: #222;
-  border: 1px solid #ccc;
-}
+        [data-theme="light"] input[type="text"],
+        [data-theme="light"] input[type="date"],
+        [data-theme="light"] select,
+        [data-theme="light"] textarea {
+            background: #fff;
+            color: #222;
+            border: 1px solid #ccc;
+        }
 
-[data-theme="light"] input:focus,
-[data-theme="light"] select:focus,
-[data-theme="light"] textarea:focus {
-  border-color: var(--accent, #00b4c4);
-  box-shadow: 0 0 0 3px rgba(0, 180, 196, 0.15);
-  outline: none;
-}
+        [data-theme="light"] input:focus,
+        [data-theme="light"] select:focus,
+        [data-theme="light"] textarea:focus {
+            border-color: var(--accent, #00b4c4);
+            box-shadow: 0 0 0 3px rgba(0, 180, 196, 0.15);
+            outline: none;
+        }
 
-[data-theme="light"] .form-error {
-  background: rgba(231, 76, 60, 0.08);
-  border-left: 3px solid #e74c3c;
-  color: #b33a3a;
-}
+        [data-theme="light"] .form-error {
+            background: rgba(231, 76, 60, 0.08);
+            border-left: 3px solid #e74c3c;
+            color: #b33a3a;
+        }
 
-[data-theme="light"] .form-group .field-error {
-  color: #d63031;
-}
+        [data-theme="light"] .form-group .field-error {
+            color: #d63031;
+        }
     </style>
+    
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const departmentSelect = document.getElementById("id_department");
+    const userSelect = document.getElementById("id_user");
+
+    if (departmentSelect) {
+        departmentSelect.addEventListener("change", function () {
+            const departmentId = this.value;
+            fetch(`/ajax/load-users/?department=${departmentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    userSelect.innerHTML = "";
+                    data.users.forEach(function (user) {
+                        const option = new Option(user.name, user.id);
+                        userSelect.appendChild(option);
+                    });
+                });
+        });
+    }
+});
+</script>
 {% endblock %}

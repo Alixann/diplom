@@ -4,9 +4,13 @@
 
 {% block main %}
     <div class="document-container">
-        <h1>Все документы</h1>
 
-        <!-- Фильтр по категориям -->
+        <div class="document-header">
+            <h1>Все документы</h1>
+            <a href="{% url 'upload_document' %}" class="upload-btn">
+                Добавить документ
+            </a>
+        </div>
         <div class="category-filter">
             <form method="get">
                 <label for="category">Категория:</label>
@@ -44,13 +48,9 @@
             <p class="no-documents">Документов нет.</p>
         {% endif %}
 
-        <button class="upload-btn"><a href="{% url 'upload_document' %}">Добавить документ</a></button>
     </div>
 
     <style>
-        /* ==============================
-           Основные переменные (тёмная тема)
-           ============================== */
         :root {
             --bg-page: #1a1d21;
             --bg-card: #24282d;
@@ -60,12 +60,20 @@
             --border-color: rgba(255, 255, 255, 0.08);
         }
 
-        /* Контейнер страницы */
+
         .document-container {
             max-width: 1200px;
         }
 
-        /* Заголовок */
+        .document-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
         h1 {
             font-size: 24px;
             font-weight: 600;

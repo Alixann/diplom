@@ -50,30 +50,35 @@ class UserProfileForm(UserChangeForm):
 
 
 class TaskForm(forms.ModelForm):
+    department = forms.ModelChoiceField(
+        queryset=Department.objects.all(), required=False, label='Отдел'
+    )
     class Meta:
         model = Task
-        fields = ['title', 'description', 'due_date', 'status', 'file_attachment', 'user']
+        fields = ['title', 'description', 'due_date', 'status', 'file_attachment', 'department', 'user']
         widgets = {
             'due_date': forms.DateInput(attrs={'type': 'date'}),
         }
-
     def __init__(self, *args, **kwargs):
         current_user = kwargs.pop('current_user', None)
         super().__init__(*args, **kwargs)
-
         if current_user:
             if current_user.role.name == ROLE_ADMIN:
-                self.fields['user'].queryset = User.objects.all()
+                self.fields['user'].queryset = User.objects.none()
             elif current_user.role.name == ROLE_MANAGER and current_user.department:
+                self.fields.pop('department')
                 self.fields['user'].queryset = User.objects.filter(department=current_user.department)
             else:
-                self.fields['user'].queryset = User.objects.none()
+                self.fields.pop('department')
+                self.fields['user'].queryset = User.objects.filter(id=current_user.id)
+                self.fields['user'].disabled = True
 
 class TaskFileUploadForm(forms.Form):
     file_attachment = forms.FileField(
         required=False,
         label='Прикрепить файл'
     )
+
 
 
 class DocumentForm(forms.ModelForm):

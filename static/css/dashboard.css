@@ -340,6 +340,7 @@ input:checked + .slider:before {
 }
 
 /* Сайдбар */
+
 #wrapper {
     display: flex;
 }
@@ -431,7 +432,6 @@ input:checked + .slider:before {
 }
 
 
-/* Стили для светлой темы сайдбара */
 [data-theme="light"] #sidebar {
     background: var(--sidebar-light-bg);
     border-right: 1px solid rgba(85, 168, 168, 0.8);

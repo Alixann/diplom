@@ -40,5 +40,6 @@ urlpatterns = [
     path('positions/<int:pk>/edit/', edit_position, name='edit_position'),
     path('positions/<int:pk>/delete/', delete_position, name='delete_position'),
     path('send_application/', send_application, name='send_application'),
+    path('ajax/load-users/', LoadUsersView.as_view(), name='ajax_load_users'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

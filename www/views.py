@@ -76,7 +76,6 @@ def toggle_user_role(request, user_id):
     return redirect('user_profile', username=user.username)
 
 
-# Просмотр профиля
 @login_required
 def profile_view(request):
     messages = Message.objects.filter(
@@ -84,7 +83,6 @@ def profile_view(request):
     ).order_by('-timestamp')
 
     chat_data = {}
-
     for msg in messages:
         other_user = msg.to_user if msg.from_user == request.user else msg.from_user
         if other_user not in chat_data:
@@ -94,18 +92,16 @@ def profile_view(request):
                 'timestamp': localtime(msg.timestamp),
             }
 
-
-    tasks = Task.objects.filter(user=request.user).order_by('due_date')
+    tasks = Task.objects.filter(user=request.user).order_by('-due_date')[:3]
 
     return render(request, 'profile.html', {
         'user': request.user,
-        'chat_users': chat_data.values(),
-        'tasks': tasks,  # 🆕 передаём задачи в шаблон
+        'chat_users': list(chat_data.values())[:3],
+        'tasks': tasks,
     })
 
 
 
-# Редактирование профиля
 @login_required
 def profile_edit(request):
     if request.method == 'POST':
@@ -119,20 +115,23 @@ def profile_edit(request):
 
 
 
-@login_required
 def user_profile_view(request, username):
     user = get_object_or_404(User, username=username)
     is_own_profile = (request.user == user)
+    is_admin = request.user.role.name == ROLE_ADMIN
+    tasks = Task.objects.filter(user=user).order_by('-due_date')[:4] if is_admin else None
+
     return render(request, 'user_profile.html', {
         'user_profile': user,
         'is_own_profile': is_own_profile,
-        'ROLE_ADMIN': ROLE_ADMIN,  # Добавлено
-        'ROLE_MANAGER': ROLE_MANAGER,  # Добавлено
-        'ROLE_EMPLOYEE': ROLE_EMPLOYEE,  # Добавлено
+        'is_admin': is_admin,
+        'tasks': tasks,
+        'ROLE_ADMIN': ROLE_ADMIN,
+        'ROLE_MANAGER': ROLE_MANAGER,
+        'ROLE_EMPLOYEE': ROLE_EMPLOYEE,
     })
 
 
-# Отправка сообщений
 class ChatView(LoginRequiredMixin, View):
     template_name = 'chat.html'
 
@@ -183,7 +182,6 @@ class DeleteMessageView(LoginRequiredMixin, View):
 
 class EditMessageView(LoginRequiredMixin, View):
     template_name = 'chat.html'
-
     def get(self, request, message_id):
         message = get_object_or_404(Message, id=message_id)
         if message.from_user != request.user:
@@ -295,6 +293,16 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
+
+class LoadUsersView(LoginRequiredMixin, View):
+    def get(self, request):
+        department_id = request.GET.get('department')
+        users = User.objects.filter(department_id=department_id).values('id', 'first_name', 'last_name')
+        user_list = [{'id': u['id'], 'name': f"{u['first_name']} {u['last_name']}"} for u in users]
+        return JsonResponse({'users': user_list})
+
+
+
 class TaskDetailView(LoginRequiredMixin, DetailView):
     model = Task
     template_name = 'task_detail.html'
@@ -364,17 +372,20 @@ class DepartmentListView(LoginRequiredMixin, ListView):
         return context
 
 
-class DepartmentDetailView(LoginRequiredMixin,DetailView):
+class DepartmentDetailView(LoginRequiredMixin, DetailView):
     model = Department
     template_name = 'department_detail.html'
     context_object_name = 'department'
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         department = self.get_object()
         context['employees'] = User.objects.filter(department=department).select_related('position')
-        return context
+        if self.request.user.role.name == ROLE_ADMIN:
+            context['dept_task_count'] = Task.objects.filter(user__department=department).count()
+        else:
+            context['dept_task_count'] = None
 
+        return context
 
 class DocumentListView(LoginRequiredMixin, ListView):
     model = Document
