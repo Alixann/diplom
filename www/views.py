@@ -55,23 +55,17 @@ class LoadPositionsView(View):
 
 
 
-
 def toggle_user_role(request, user_id):
-    # Проверяем, что текущий пользователь - администратор
     if not request.user.role or request.user.role.name != ROLE_ADMIN:
         messages.error(request, "Недостаточно прав для выполнения этого действия")
         return redirect('main')
-
     user = get_object_or_404(User, id=user_id)
-
     if user.role.name == ROLE_EMPLOYEE:
-        # Назначаем руководителем
         manager_role = Role.objects.get(name=ROLE_MANAGER)
         user.role = manager_role
         user.save()
         messages.success(request, f"{user.get_full_name()} назначен(а) руководителем")
     elif user.role.name == ROLE_MANAGER:
-        # Возвращаем в сотрудники
         employee_role = Role.objects.get(name=ROLE_EMPLOYEE)
         user.role = employee_role
         user.save()
@@ -222,7 +216,6 @@ class EditMessageView(LoginRequiredMixin, View):
 
 class Home(LoginRequiredMixin, TemplateView):
     template_name = 'main.html'
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
@@ -641,7 +634,6 @@ def send_application(request):
             Телефон: {phone}
             '''
 
-            # Отправка письма
             send_mail(
                 subject,
                 message,
