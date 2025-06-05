@@ -86,3 +86,7 @@ class DocumentForm(forms.ModelForm):
 class SearchForm(forms.Form):
     query = forms.CharField(required=False, label='Поиск', max_length=100)
 
+class ApplicationForm(forms.Form):
+    name = forms.CharField(label='ФИО', max_length=100)
+    email = forms.EmailField(label='Электронная почта')
+    phone = forms.CharField(label='Телефон', max_length=20)

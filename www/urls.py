@@ -14,7 +14,6 @@ urlpatterns = [
     path('task_create/', TaskCreateView.as_view(), name='task_create'),
     path('task/<int:pk>/', TaskDetailView.as_view(), name='task_detail'),
     path('tasks/<int:pk>/delete/', TaskDeleteView.as_view(), name='task_delete'),
-    path('completed/', CompletedTasksView.as_view(), name='completed_tasks'),
     path('documents/', DocumentListView.as_view(), name='documents'),
     path('documents/upload/', DocumentUploadView.as_view(), name='upload_document'),
     path('search/', search, name='search'),
@@ -40,5 +39,6 @@ urlpatterns = [
     path('positions/add/', add_position, name='add_position'),
     path('positions/<int:pk>/edit/', edit_position, name='edit_position'),
     path('positions/<int:pk>/delete/', delete_position, name='delete_position'),
+    path('send_application/', send_application, name='send_application'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

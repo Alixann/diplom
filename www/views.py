@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
+from django.core.mail import send_mail
 from django.db.models import Q
 from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -341,7 +343,7 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
         return super().get(request, *args, **kwargs)
 
 
-class TaskDeleteView(DeleteView):
+class TaskDeleteView(LoginRequiredMixin,DeleteView):
     model = Task
     success_url = reverse_lazy('task')
 
@@ -353,16 +355,9 @@ class TaskDeleteView(DeleteView):
             return HttpResponseForbidden("Удаление разрешено только для завершённых задач.")
         return super().dispatch(request, *args, **kwargs)
 
-class CompletedTasksView(ListView, LoginRequiredMixin):
-    model = Task
-    template_name = 'completed_tasks.html'
-    context_object_name = 'completed_tasks'
-
-    def get_queryset(self):
-        return Task.objects.filter(user=self.request.user, is_completed=True)
 
 
-class DepartmentListView(ListView):
+class DepartmentListView(LoginRequiredMixin, ListView):
     model = Department
     template_name = 'department_list.html'
     context_object_name = 'departments'
@@ -376,7 +371,7 @@ class DepartmentListView(ListView):
         return context
 
 
-class DepartmentDetailView(DetailView):
+class DepartmentDetailView(LoginRequiredMixin,DetailView):
     model = Department
     template_name = 'department_detail.html'
     context_object_name = 'department'
@@ -425,7 +420,7 @@ class DocumentUploadView(View, LoginRequiredMixin):
         return render(request, 'upload_document.html', {'form': form})
 
 
-
+@login_required
 def search(request):
     query = request.GET.get('query', '').strip()
     employees = User.objects.none()
@@ -626,3 +621,36 @@ def delete_position(request, pk):
     return redirect('admin_panel')
 
 
+
+def send_application(request):
+    if request.method == 'POST':
+        form = ApplicationForm(request.POST)
+        if form.is_valid():
+            # Получаем данные из формы
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            phone = form.cleaned_data['phone']
+
+            # Тема и текст письма
+            subject = 'Новая заявка с сайта'
+            message = f'''
+            Поступила новая заявка:
+
+            ФИО: {name}
+            Email: {email}
+            Телефон: {phone}
+            '''
+
+            # Отправка письма
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [settings.ADMIN_EMAIL],  # Ваш email
+                fail_silently=False,
+            )
+
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    return JsonResponse({'success': False, 'errors': 'Неверный метод запроса'})
