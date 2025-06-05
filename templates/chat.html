@@ -625,6 +625,139 @@
         font-size: 16px;
         font-weight: 500;
     }
+    [data-theme="light"] {
+    --bg-page: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-header: #f1f5f9;
+    --accent: #0095a8;
+    --accent-light: rgba(0, 149, 168, 0.1);
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --online: #22c55e;
+    --offline: #ef4444;
+    --sent-bg: rgba(0, 149, 168, 0.15);
+    --received-bg: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .chat-container {
+    background: var(--bg-page);
+}
+
+[data-theme="light"] .chat-header {
+    background: var(--bg-header);
+    border-color: var(--border-color);
+}
+
+[data-theme="light"] .user-info h3,
+[data-theme="light"] .empty-chat p:first-of-type,
+[data-theme="light"] .modal h3 {
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .user-info p,
+[data-theme="light"] .online-status,
+[data-theme="light"] .message-meta,
+[data-theme="light"] .edited,
+[data-theme="light"] .empty-chat,
+[data-theme="light"] .close {
+    color: var(--text-secondary);
+}
+
+[data-theme="light"] .avatar,
+[data-theme="light"] .message-avatar {
+    border: 2px solid var(--accent);
+}
+
+[data-theme="light"] .sent .message-text {
+    background: var(--sent-bg);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .received .message-text {
+    background: var(--received-bg);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .file-attachment {
+    background: var(--accent-light);
+}
+
+[data-theme="light"] .file-attachment a {
+    color: var(--accent);
+}
+
+[data-theme="light"] .file-attachment a:hover {
+    color: #007c90;
+}
+
+[data-theme="light"] .message-actions {
+    background: var(--bg-card);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .action-btn {
+    color: var(--text-secondary);
+}
+
+[data-theme="light"] .action-btn:hover {
+    background: rgba(0, 149, 168, 0.1);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .edit-btn:hover {
+    color: var(--accent);
+}
+
+[data-theme="light"] .delete-btn:hover {
+    color: var(--danger);
+}
+
+[data-theme="light"] .message-form {
+    background: var(--bg-header);
+    border-top: 1px solid var(--border-color);
+}
+
+[data-theme="light"] .form-group {
+    background: var(--bg-card);
+}
+
+[data-theme="light"] .message-input {
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .file-upload {
+    color: var(--text-secondary);
+}
+
+[data-theme="light"] .file-upload:hover {
+    color: var(--accent);
+}
+
+[data-theme="light"] .send-btn {
+    background: var(--accent);
+}
+
+[data-theme="light"] .send-btn:hover {
+    background: #007c90;
+}
+
+[data-theme="light"] .modal-content {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .modal textarea {
+    background: rgba(0, 0, 0, 0.03);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+[data-theme="light"] .modal textarea:focus {
+    border-color: var(--accent);
+}
 </style>
 
 {% endblock %}

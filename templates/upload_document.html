@@ -149,5 +149,63 @@
                 font-size: 15px;
             }
         }
+        [data-theme="light"] .upload-document-container {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .upload-title {
+  color: #007c91;
+  text-shadow: none;
+}
+
+[data-theme="light"] .upload-form label {
+  color: #333;
+}
+
+[data-theme="light"] .upload-form input[type="text"],
+[data-theme="light"] .upload-form input[type="file"],
+[data-theme="light"] .upload-form select,
+[data-theme="light"] .upload-form textarea {
+  background: #fff;
+  color: #222;
+  border: 1px solid #ccc;
+}
+
+[data-theme="light"] .upload-form input[type="file"] {
+  background: rgba(0, 0, 0, 0.02);
+  border: 2px dashed #ccc;
+}
+
+[data-theme="light"] .upload-form input:focus,
+[data-theme="light"] .upload-form select:focus,
+[data-theme="light"] .upload-form textarea:focus {
+  border-color: #00b4c4;
+  box-shadow: 0 0 0 3px rgba(0, 180, 196, 0.15);
+  outline: none;
+}
+
+[data-theme="light"] .add {
+  background: #00b4c4;
+  color: white;
+}
+
+[data-theme="light"] .back-link {
+  color: #666;
+}
+
+[data-theme="light"] .back-link:hover {
+  color: #00b4c4;
+}
+
+[data-theme="light"] .upload-form .form-error {
+  background: rgba(231, 76, 60, 0.08);
+  border-left: 3px solid #e74c3c;
+  color: #b33a3a;
+}
+
+[data-theme="light"] .upload-form .field-error {
+  color: #d63031;
+}
     </style>
 {% endblock %}

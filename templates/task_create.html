@@ -135,5 +135,45 @@
                 flex-direction: column;
             }
         }
+        [data-theme="light"] .form-container {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .form-title {
+  color: #007c91;
+  text-shadow: none;
+}
+
+[data-theme="light"] label {
+  color: #333;
+}
+
+[data-theme="light"] input[type="text"],
+[data-theme="light"] input[type="date"],
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+  background: #fff;
+  color: #222;
+  border: 1px solid #ccc;
+}
+
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus,
+[data-theme="light"] textarea:focus {
+  border-color: var(--accent, #00b4c4);
+  box-shadow: 0 0 0 3px rgba(0, 180, 196, 0.15);
+  outline: none;
+}
+
+[data-theme="light"] .form-error {
+  background: rgba(231, 76, 60, 0.08);
+  border-left: 3px solid #e74c3c;
+  color: #b33a3a;
+}
+
+[data-theme="light"] .form-group .field-error {
+  color: #d63031;
+}
     </style>
 {% endblock %}

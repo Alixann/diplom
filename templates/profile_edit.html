@@ -159,5 +159,61 @@
         font-size: 15px;
       }
     }
+    [data-theme="light"] .edit-profile-page {
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .edit-title {
+  color: #007c91;
+}
+
+[data-theme="light"] .form-group label {
+  color: #333;
+}
+
+[data-theme="light"] .form-group input:not([type="checkbox"]),
+[data-theme="light"] .form-group select,
+[data-theme="light"] .form-group textarea {
+  background: #fff;
+  color: #222;
+  border: 1px solid #ccc;
+}
+
+[data-theme="light"] .form-group input:focus,
+[data-theme="light"] .form-group select:focus,
+[data-theme="light"] .form-group textarea:focus {
+  border-color: var(--accent, #00b4c4);
+  box-shadow: 0 0 0 3px rgba(0, 180, 196, 0.15);
+  outline: none;
+}
+
+[data-theme="light"] .form-group input[type="file"] {
+  color: #555;
+}
+
+[data-theme="light"] .form-group input[type="checkbox"] {
+  accent-color: var(--accent, #00b4c4);
+}
+
+[data-theme="light"] .field-error {
+  color: #e74c3c;
+}
+
+[data-theme="light"] .form-error {
+  background: rgba(235, 87, 87, 0.1);
+  border-left: 4px solid #e74c3c;
+  color: #d22;
+}
+
+[data-theme="light"] .save-button {
+  background: linear-gradient(135deg, #00b4c4 0%, #0098a7 100%);
+  color: white;
+}
+
+[data-theme="light"] .save-button:hover {
+  background: linear-gradient(135deg, #0098a7 0%, #00b4c4 100%);
+  box-shadow: 0 4px 15px rgba(0, 180, 196, 0.2);
+}
   </style>
 {% endblock %}
