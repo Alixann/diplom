@@ -78,9 +78,6 @@
     </div>
 
     <style>
-        /* ==============================
-           Основные переменные (тёмная тема)
-           ============================== */
         :root {
             --bg-page: #1a1d21;
             --bg-card: #24282d;
@@ -93,14 +90,12 @@
             --border-radius: 12px;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        /* Контейнер страницы */
+        
         .department-page {
             color: var(--text-primary);
-            max-width: 1200px;
+            max-width: 1920px;
         }
-
-        /* Заголовок отдела */
+        
         .department-header {
             margin-bottom: 2rem;
             padding: 2rem;
@@ -208,7 +203,7 @@
             }
         }
 
-        /* Блок сотрудников */
+ 
         .employee-section {
             background: var(--bg-section);
             border-radius: var(--border-radius);
@@ -359,16 +354,13 @@
                 margin-top: 4px;
             }
         }
-
-        /* ==============================
-           Переопределения для светлой темы
-           ============================== */
+        
         [data-theme="light"] {
             --bg-page: #f8fafc;
             --bg-card: #ffffff;
             --bg-section: #ffffff;
-            --accent: #0095a8;           /* сохраняем акцент */
-            --accent-hover: #00778a;     /* на 15% темнее */
+            --accent: #0095a8;          
+            --accent-hover: #00778a;     
             --text-primary: #1e293b;
             --text-secondary: #64748b;
             --border-color: #e2e8f0;

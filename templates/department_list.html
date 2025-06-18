@@ -54,12 +54,10 @@
             --transition: all 0.3s ease;
         }
 
-        /* Контейнер страницы */
         .departments-container {
-            max-width: 1200px;
+            max-width: 1920px;
         }
 
-        /* Заголовок */
         h1 {
             font-size: 24px;
             font-weight: 600;
@@ -79,7 +77,6 @@
             background: var(--accent);
         }
 
-        /* Контент */
         .departments-content {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -178,7 +175,6 @@
             font-size: 1.1rem;
         }
 
-        /* Адаптивность */
         @media (max-width: 768px) {
             .departments-container {
                 padding: 15px;
@@ -210,15 +206,12 @@
                 gap: 4px;
             }
         }
-
-        /* ==============================
-           Переопределения для светлой темы
-           ============================== */
+        
         [data-theme="light"] {
             --bg-page: #f8fafc;
             --bg-card: #ffffff;
-            --accent: #0095a8;           /* сохраняем акцентный цвет */
-            --accent-hover: #00778a;     /* более тёмный на 15% */
+            --accent: #0095a8;         
+            --accent-hover: #00778a;     
             --text-primary: #1e293b;
             --text-secondary: #64748b;
             --border-color: #e2e8f0;

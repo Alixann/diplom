@@ -6,7 +6,6 @@
 {% block main %}
     <div class="profile-container">
         <div class="profile-card">
-            <!-- Основная информация (верхний блок) -->
             <div class="profile-main-section">
                 <div class="profile-header">
                     <div class="avatar-container">
@@ -77,8 +76,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Основные данные (левый блок) -->
             <div class="profile-data-section">
                 <div class="profile-info-block">
                     <h2 class="block-title">
@@ -122,8 +119,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Навыки (правый верхний блок) -->
                 <div class="profile-skills-block">
                     <h2 class="block-title">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -155,8 +150,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Проекты (нижний блок) -->
             <div class="profile-projects-section">
                 <h2 class="block-title">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -204,9 +197,6 @@
     </div>
 
     <style>
-        /* ==============================
-           Основные переменные (тёмная тема)
-           ============================== */
         :root {
             --bg-page: #1a1d21;
             --bg-card: #24282d;
@@ -230,8 +220,7 @@
         }
 
         .profile-container {
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 1920px;
         }
 
         .profile-card {
@@ -242,7 +231,6 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* Основной верхний блок */
         .profile-main-section {
             padding: 1.5rem;
             background: var(--bg-section);
@@ -357,15 +345,15 @@
             background-color: var(--accent);
             color: white;
             border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
+            padding: 0.7rem 1.4rem;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
             transition: background-color 0.3s;
         }
 
         .role-toggle-button:hover {
-            background-color: var(--accent-hover);
+            background-color: var(--accent);
         }
 
         .role-admin {
@@ -402,7 +390,6 @@
             transform: rotate(15deg);
         }
 
-        /* Блоки с информацией */
         .profile-data-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -467,8 +454,7 @@
             color: var(--danger);
             font-weight: 500;
         }
-
-        /* Блок навыков */
+        
         .skills-container {
             display: flex;
             flex-direction: column;
@@ -498,8 +484,7 @@
             background: var(--accent);
             border-radius: 3px;
         }
-
-        /* Блок проектов */
+        
         .profile-projects-section {
             padding: 0 2.5rem 2.5rem;
         }
@@ -586,8 +571,6 @@
             color: #0095a8;
             text-decoration: underline;
         }
-
-        /* Состояния пустых блоков */
         .empty-state {
             display: flex;
             flex-direction: column;
@@ -606,8 +589,7 @@
         .empty-state svg {
             stroke: var(--text-secondary);
         }
-
-        /* Адаптивность */
+        
         @media (max-width: 1024px) {
             .profile-data-section {
                 grid-template-columns: 1fr;
@@ -670,17 +652,14 @@
                 grid-template-columns: 1fr;
             }
         }
-
-        /* ==============================
-           Переопределения для светлой темы
-           ============================== */
+        
         [data-theme="light"] {
             --bg-page: #f8fafc;
             --bg-card: #ffffff;
             --bg-section: #eef2f6;
             --accent: #0095a8;
-            --accent-light: rgba(0, 149, 168, 0.1);
-            --accent-lighter: rgba(0, 149, 168, 0.05);
+            --accent-light: rgba(0, 131, 148, 0.66);
+            --accent-lighter: rgba(0, 149, 168, 0.29);
             --text-primary: #1e293b;
             --text-secondary: #64748b;
             --border-color: #e2e8f0;
@@ -742,12 +721,12 @@
         }
 
         [data-theme="light"] .edit-button {
-            background: var(--accent-light);
-            color: var(--accent);
+            background: rgb(0 142 152 / 41%);
+            color: white;
         }
 
         [data-theme="light"] .edit-button:hover {
-            background: rgba(0, 149, 168, 0.2);
+            background: rgba(0, 142, 152, 0.61);
         }
 
         [data-theme="light"] .profile-info-block,

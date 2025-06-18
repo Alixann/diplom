@@ -3,308 +3,313 @@
 {% block title %}Результаты поиска{% endblock %}
 
 {% block main %}
-<style>
-  /* ==============================
-     Основные переменные (тёмная тема)
-     ============================== */
-  :root {
-    --accent: #00e1f4;
-    --accent-hover: #00b4c4;
-    --bg-card: #2d3035;
-    --bg-page: #1a1d21;
-    --text-primary: #ffffff;
-    --text-secondary: #aaaaaa;
-    --border-color: rgba(255, 255, 255, 0.1);
-  }
+    <style>
+        :root {
+            --accent: #00e1f4;
+            --accent-hover: #00b4c4;
+            --bg-card: #2d3035;
+            --bg-page: #1a1d21;
+            --text-primary: #ffffff;
+            --text-secondary: #aaaaaa;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
 
-  body {
-    background-color: var(--bg-page);
-    color: var(--text-primary);
-  }
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+        }
 
-  .search-container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+        .search-container {
+            max-width: 1920px;
+        }
 
-  /* Заголовок страницы */
-  .search-container h1 {
-    font-size: 28px;
-    color: var(--accent);
-    font-weight: 700;
-    margin-bottom: 30px;
-    position: relative;
-    padding-left: 40px;
-  }
-  .search-container h1:before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 30px;
-    height: 30px;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300e1f4'%3E%3Cpath d='M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z'/%3E%3C/svg%3E");
-  }
+        .search-container h1 {
+            font-size: 28px;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 30px;
+            position: relative;
+            padding-left: 40px;
+        }
 
-  /* Заголовки секций */
-  .search-container h2 {
-    font-size: 22px;
-    color: var(--text-primary);
-    font-weight: 600;
-    margin: 40px 0 20px;
-    padding: 10px 0;
-    border-bottom: 2px solid rgba(0, 180, 196, 0.3);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .search-container h2:before {
-    content: '';
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    background-size: contain;
-  }
-  h2[data-section="employees"]:before {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300e1f4'%3E%3Cpath d='M7.5 6.5C7.5 8.981 9.519 11 12 11s4.5-2.019 4.5-4.5S14.481 2 12 2 7.5 4.019 7.5 6.5zM20 21h1v-1c0-3.859-3.141-7-7-7h-4c-3.86 0-7 3.141-7 7v1h17z'/%3E%3C/svg%3E");
-  }
-  h2[data-section="documents"]:before {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300e1f4'%3E%3Cpath d='M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z'/%3E%3C/svg%3E");
-  }
+        .search-container h1:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300e1f4'%3E%3Cpath d='M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z'/%3E%3C/svg%3E");
+        }
 
-  /* Списки результатов */
-  .employee-list,
-  .document-list {
-    display: grid;
-    gap: 12px;
-    padding: 0;
-    list-style: none;
-  }
+        .search-container h2 {
+            font-size: 22px;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin: 40px 0 20px;
+            padding: 10px 0;
+            border-bottom: 2px solid rgba(0, 180, 196, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-  .employee-item,
-  .document-item {
-    background: linear-gradient(145deg, #2d3035 0%, #25282d 100%);
-    padding: 18px 25px;
-    border-radius: 12px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid var(--border-color);
-    position: relative;
-    overflow: hidden;
-  }
-  .employee-item:hover,
-  .document-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 180, 196, 0.15);
-    border-color: rgba(0, 180, 196, 0.3);
-  }
-  .employee-item:before,
-  .document-item:before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 3px;
-    background: var(--accent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  .employee-item:hover:before,
-  .document-item:hover:before {
-    opacity: 1;
-  }
+        .search-container h2:before {
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-size: contain;
+        }
 
-  /* Текст внутри элементов */
-  .employee-item div,
-  .document-item div {
-    color: var(--text-primary);
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 6px;
-  }
-  .employee-item span,
-  .document-item span {
-    color: var(--text-secondary);
-    font-size: 14px;
-    display: block;
-    line-height: 1.5;
-  }
+        h2[data-section="employees"]:before {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300e1f4'%3E%3Cpath d='M7.5 6.5C7.5 8.981 9.519 11 12 11s4.5-2.019 4.5-4.5S14.481 2 12 2 7.5 4.019 7.5 6.5zM20 21h1v-1c0-3.859-3.141-7-7-7h-4c-3.86 0-7 3.141-7 7v1h17z'/%3E%3C/svg%3E");
+        }
 
-  /* Ссылки на документы */
-  .document-item a {
-    color: var(--accent) !important;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s ease;
-  }
-  .document-item a:hover {
-    color: var(--accent-hover) !important;
-  }
+        h2[data-section="documents"]:before {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300e1f4'%3E%3Cpath d='M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z'/%3E%3C/svg%3E");
+        }
 
-  /* Сообщения об отсутствии результатов */
-  .search-container p {
-    color: #777;
-    padding: 20px;
-    text-align: center;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px dashed rgba(255, 255, 255, 0.1);
-  }
+        .employee-list,
+        .document-list {
+            display: grid;
+            gap: 12px;
+            padding: 0;
+            list-style: none;
+        }
 
-  /* Адаптив */
-  @media (max-width: 768px) {
-    .search-container {
-      padding: 20px 15px;
-    }
-    .search-container h1 {
-      font-size: 24px;
-      padding-left: 30px;
-    }
-    .search-container h1:before {
-      width: 24px;
-      height: 24px;
-    }
-    .search-container h2 {
-      font-size: 20px;
-      margin: 30px 0 15px;
-    }
-    .employee-item,
-    .document-item {
-      padding: 15px;
-    }
-  }
+        .employee-item,
+        .document-item {
+            background: linear-gradient(145deg, #2d3035 0%, #25282d 100%);
+            padding: 18px 25px;
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
 
-  /* ==============================
-     Переопределения для светлой темы
-     ============================== */
-  [data-theme="light"] {
-    --accent: #0095a8;
-    --accent-hover: #00778a;
-    --bg-card: #ffffff;
-    --bg-page: #f8fafc;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --border-color: #e2e8f0;
-  }
+        .employee-item:hover,
+        .document-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 180, 196, 0.15);
+            border-color: rgba(0, 180, 196, 0.3);
+        }
 
-  /* Фон страницы при светлой теме */
-  [data-theme="light"] body {
-    background-color: var(--bg-page);
-    color: var(--text-primary);
-  }
+        .employee-item:before,
+        .document-item:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
-  /* Поисковый контейнер */
-  [data-theme="light"] .search-container {
-    background: none;
-  }
+        .employee-item:hover:before,
+        .document-item:hover:before {
+            opacity: 1;
+        }
 
-  [data-theme="light"] .search-container h1 {
-    color: var(--accent);
-  }
-  [data-theme="light"] .search-container h1:before {
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230095a8'%3E%3Cpath d='M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z'/%3E%3C/svg%3E");
-  }
+        .employee-item div,
+        .document-item div {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
 
-  [data-theme="light"] .search-container h2 {
-    color: var(--text-primary);
-    border-bottom: 2px solid rgba(0, 149, 168, 0.3);
-  }
-  [data-theme="light"] h2[data-section="employees"]:before {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230095a8'%3E%3Cpath d='M7.5 6.5C7.5 8.981 9.519 11 12 11s4.5-2.019 4.5-4.5S14.481 2 12 2 7.5 4.019 7.5 6.5zM20 21h1v-1c0-3.859-3.141-7-7-7h-4c-3.86 0-7 3.141-7 7v1h17z'/%3E%3C/svg%3E");
-  }
-  [data-theme="light"] h2[data-section="documents"]:before {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230095a8'%3E%3Cpath d='M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z'/%3E%3C/svg%3E");
-  }
+        .employee-item span,
+        .document-item span {
+            color: var(--text-secondary);
+            font-size: 14px;
+            display: block;
+            line-height: 1.5;
+        }
 
-  [data-theme="light"] .employee-item,
-  [data-theme="light"] .document-item {
-    background: #ffffff;
-    border: 1px solid var(--border-color);
-  }
-  [data-theme="light"] .employee-item:hover,
-  [data-theme="light"] .document-item:hover {
-    background: rgba(0, 149, 168, 0.03);
-    box-shadow: 0 6px 12px rgba(0, 149, 168, 0.15);
-    border-color: var(--accent);
-  }
-  [data-theme="light"] .employee-item:before,
-  [data-theme="light"] .document-item:before {
-    background: var(--accent);
-    opacity: 0;
-  }
-  [data-theme="light"] .employee-item:hover:before,
-  [data-theme="light"] .document-item:hover:before {
-    opacity: 1;
-  }
+        .document-item a {
+            color: var(--accent) !important;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
 
-  [data-theme="light"] .employee-item div,
-  [data-theme="light"] .document-item div {
-    color: var(--text-primary);
-  }
-  [data-theme="light"] .employee-item span,
-  [data-theme="light"] .document-item span {
-    color: var(--text-secondary);
-  }
+        .document-item a:hover {
+            color: var(--accent-hover) !important;
+        }
 
-  [data-theme="light"] .document-item a {
-    color: var(--accent) !important;
-  }
-  [data-theme="light"] .document-item a:hover {
-    color: var(--accent-hover) !important;
-  }
+        .search-container p {
+            color: #777;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+        }
 
-  [data-theme="light"] .search-container p {
-    background: rgba(0, 0, 0, 0.03);
-    border: 1px dashed var(--border-color);
-    color: var(--text-secondary);
-  }
-</style>
 
-<div class="search-container">
-  <h1>Результаты поиска «{{ query }}»</h1>
+        @media (max-width: 768px) {
+            .search-container {
+                padding: 20px 15px;
+            }
 
-  <!-- Секция сотрудников -->
-  <h2 data-section="employees">Сотрудники:</h2>
-  {% if employees.exists %}
-    <ul class="employee-list">
-      {% for employee in employees %}
-        <li class="employee-item">
-          <div>
-            <a href="{% url 'user_profile' employee.username %}"
-               style="color: var(--text-primary); text-decoration: none;">
-              {{ employee.first_name }} {{ employee.last_name }} ({{ employee.username }})
-            </a>
-          </div>
-          <span>
+            .search-container h1 {
+                font-size: 24px;
+                padding-left: 30px;
+            }
+
+            .search-container h1:before {
+                width: 24px;
+                height: 24px;
+            }
+
+            .search-container h2 {
+                font-size: 20px;
+                margin: 30px 0 15px;
+            }
+
+            .employee-item,
+            .document-item {
+                padding: 15px;
+            }
+        }
+
+
+        [data-theme="light"] {
+            --accent: #0095a8;
+            --accent-hover: #00778a;
+            --bg-card: #ffffff;
+            --bg-page: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        [data-theme="light"] body {
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .search-container {
+            background: none;
+        }
+
+        [data-theme="light"] .search-container h1 {
+            color: var(--accent);
+        }
+
+        [data-theme="light"] .search-container h1:before {
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230095a8'%3E%3Cpath d='M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z'/%3E%3C/svg%3E");
+        }
+
+        [data-theme="light"] .search-container h2 {
+            color: var(--text-primary);
+            border-bottom: 2px solid rgba(0, 149, 168, 0.3);
+        }
+
+        [data-theme="light"] h2[data-section="employees"]:before {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230095a8'%3E%3Cpath d='M7.5 6.5C7.5 8.981 9.519 11 12 11s4.5-2.019 4.5-4.5S14.481 2 12 2 7.5 4.019 7.5 6.5zM20 21h1v-1c0-3.859-3.141-7-7-7h-4c-3.86 0-7 3.141-7 7v1h17z'/%3E%3C/svg%3E");
+        }
+
+        [data-theme="light"] h2[data-section="documents"]:before {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230095a8'%3E%3Cpath d='M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z'/%3E%3C/svg%3E");
+        }
+
+        [data-theme="light"] .employee-item,
+        [data-theme="light"] .document-item {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+        }
+
+        [data-theme="light"] .employee-item:hover,
+        [data-theme="light"] .document-item:hover {
+            background: rgba(0, 149, 168, 0.03);
+            box-shadow: 0 6px 12px rgba(0, 149, 168, 0.15);
+            border-color: var(--accent);
+        }
+
+        [data-theme="light"] .employee-item:before,
+        [data-theme="light"] .document-item:before {
+            background: var(--accent);
+            opacity: 0;
+        }
+
+        [data-theme="light"] .employee-item:hover:before,
+        [data-theme="light"] .document-item:hover:before {
+            opacity: 1;
+        }
+
+        [data-theme="light"] .employee-item div,
+        [data-theme="light"] .document-item div {
+            color: var(--text-primary);
+        }
+
+        [data-theme="light"] .employee-item span,
+        [data-theme="light"] .document-item span {
+            color: var(--text-secondary);
+        }
+
+        [data-theme="light"] .document-item a {
+            color: var(--accent) !important;
+        }
+
+        [data-theme="light"] .document-item a:hover {
+            color: var(--accent-hover) !important;
+        }
+
+        [data-theme="light"] .search-container p {
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px dashed var(--border-color);
+            color: var(--text-secondary);
+        }
+    </style>
+
+    <div class="search-container">
+        <h1>Результаты поиска «{{ query }}»</h1>
+
+        <h2 data-section="employees">Сотрудники:</h2>
+        {% if employees.exists %}
+            <ul class="employee-list">
+                {% for employee in employees %}
+                    <li class="employee-item">
+                        <div>
+                            <a href="{% url 'user_profile' employee.username %}"
+                               style="color: var(--text-primary); text-decoration: none;">
+                                {{ employee.first_name }} {{ employee.last_name }} ({{ employee.username }})
+                            </a>
+                        </div>
+                        <span>
             {% if employee.position %}
-              Должность: {{ employee.position.title }}
+                Должность: {{ employee.position.title }}
             {% else %}
-              Должность: —
+                Должность: —
             {% endif %}
           </span>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>Сотрудников не найдено.</p>
-  {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Сотрудников не найдено.</p>
+        {% endif %}
 
-  <!-- Секция документов -->
-  <h2 data-section="documents">Документы:</h2>
-  {% if documents.exists %}
-    <ul class="document-list">
-      {% for document in documents %}
-        <li class="document-item">
-          <div>
-            <a href="{{ document.file.url }}" target="_blank">{{ document.title }}</a>
-          </div>
-          <span>Загружен {{ document.uploaded_at|date:"d.m.Y H:i" }} пользователем {{ document.user.get_full_name }}</span>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>Документы не найдены.</p>
-  {% endif %}
-</div>
+        <h2 data-section="documents">Документы:</h2>
+        {% if documents.exists %}
+            <ul class="document-list">
+                {% for document in documents %}
+                    <li class="document-item">
+                        <div>
+                            <a href="{{ document.file.url }}" target="_blank">{{ document.title }}</a>
+                        </div>
+                        <span>Загружен {{ document.uploaded_at|date:"d.m.Y H:i" }} пользователем {{ document.user.get_full_name }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Документы не найдены.</p>
+        {% endif %}
+    </div>
 {% endblock %}

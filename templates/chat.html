@@ -4,7 +4,6 @@
 
 {% block main %}
 <div class="chat-container">
-    <!-- Шапка чата -->
     <div class="chat-header">
         <div class="user-info">
             <img class="avatar" src="{% if other_user.avatar %}{{ other_user.avatar.url }}{% else %}{% static 'img/default-avatar.png' %}{% endif %}" alt="Аватар">
@@ -22,17 +21,14 @@
         </div>
     </div>
 
-    <!-- Область сообщений -->
     <div class="messages-container">
         {% for msg in messages %}
             <div class="message {% if msg.from_user == request.user %}sent{% else %}received{% endif %}">
-                <!-- Аватар для полученных сообщений -->
                 {% if msg.from_user != request.user %}
                     <img src="{% if other_user.avatar %}{{ other_user.avatar.url }}{% else %}{% static 'img/default-avatar.png' %}{% endif %}" alt="Аватар" class="message-avatar">
                 {% endif %}
                 
                 <div class="message-content">
-                    <!-- Основной контент сообщения -->
                     <div class="message-text">
                         {% if msg.content %}
                             <p>{{ msg.content }}</p>
@@ -47,8 +43,6 @@
                             </div>
                         {% endif %}
                     </div>
-                    
-                    <!-- Время и статус сообщения -->
                     <div class="message-meta">
                         <span class="time">{{ msg.timestamp|date:"H:i" }}</span>
                         {% if msg.edited %}
@@ -56,8 +50,6 @@
                         {% endif %}
                     </div>
                 </div>
-                
-                <!-- Действия с сообщением -->
                 {% if msg.from_user == request.user %}
                     <div class="message-actions">
                         <a href="{% url 'edit_message' msg.id %}" class="action-btn edit-btn" title="Редактировать">✏️</a>
@@ -81,7 +73,6 @@
         {% endfor %}
     </div>
 
-    <!-- Форма отправки сообщений -->
     <form method="post" enctype="multipart/form-data" class="message-form">
         {% csrf_token %}
         <div class="form-group">
@@ -104,7 +95,6 @@
     </form>
 </div>
 
-<!-- Страница редактирования сообщения (может быть в отдельном шаблоне) -->
 {% if edit_message_id %}
 <div class="edit-message-modal">
     <div class="modal-content">
@@ -121,7 +111,6 @@
 </div>
 {% endif %}
     
-
 <style>
     :root {
         --bg-page: #0f1114;

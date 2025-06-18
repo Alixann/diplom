@@ -9,8 +9,8 @@ class UserForm(UserCreationForm):
         fields = [
             'username',
             'email',
-            'first_name',  # Добавлено
-            'last_name',  # Добавлено
+            'first_name',
+            'last_name',
             'telephone',
             'department',
             'position',
@@ -20,11 +20,7 @@ class UserForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        # Начальные значения для должностей
         self.fields['position'].queryset = Position.objects.none()
-
-        # Динамическая загрузка должностей при наличии отдела в данных
         if 'department' in self.data:
             try:
                 department_id = int(self.data.get('department'))

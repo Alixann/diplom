@@ -206,7 +206,7 @@ header {
 
 header a {
     text-decoration: none;
-    color: #DDDDDD;
+    color: #ffffff;
 }
 
 header input[type="text"] {
@@ -251,7 +251,6 @@ header .profile span {
     font-weight: 500;
 }
 
-/* Переключатель темы */
 .theme-switcher {
     display: flex;
     align-items: center;
@@ -339,7 +338,6 @@ input:checked + .slider:before {
     color: #1A1C1E;
 }
 
-/* Сайдбар */
 
 #wrapper {
     display: flex;

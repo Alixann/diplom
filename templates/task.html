@@ -10,8 +10,6 @@
                 Добавить задачу
             </a>
         </div>
-
-        <!-- Фильтры -->
         <div class="filters">
             <form method="get" class="filter-form">
                 <div class="filter-group">
@@ -137,7 +135,7 @@
         }
 
         .document-container {
-            max-width: 1200px;
+            max-width: 1920px;
         }
 
         h1 {
@@ -259,7 +257,7 @@
             bottom: 0;
             width: 4px;
         }
-        
+
 
         .document-icon {
             margin-right: 15px;
@@ -461,7 +459,8 @@
                 justify-content: center;
             }
         }
-         [data-theme="light"] {
+
+        [data-theme="light"] {
             --bg-page: #f8fafc;
             --bg-card: #ffffff;
             --bg-section: #ffffff;
@@ -476,7 +475,6 @@
         }
 
         [data-theme="light"] .document-container {
-            /* фон страницы */
             background-color: var(--bg-page);
         }
 
@@ -489,7 +487,6 @@
         }
 
         [data-theme="light"] .tasks-header {
-            /* текстовая обёртка остаётся прозрачной */
         }
 
         [data-theme="light"] .filters {
@@ -515,7 +512,6 @@
         }
 
         [data-theme="light"] .document-list {
-            /* фон списка остаётся прозрачным */
         }
 
         [data-theme="light"] .document-item {
@@ -613,7 +609,7 @@
         }
 
         [data-theme="light"] .add-document-btn:hover {
-            background: var(--accent-hover);
+            background: var(--accent);
             box-shadow: 0 4px 10px rgba(0, 149, 168, 0.3);
         }
 

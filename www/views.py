@@ -582,7 +582,6 @@ def delete_document(request, pk):
 
 
 def add_position(request):
-    # Форма проста: выбираем отдел и вводим название
     if request.method == 'POST':
         department_id = request.POST.get('department')
         title = request.POST.get('title')
@@ -591,8 +590,6 @@ def add_position(request):
             Position.objects.create(department=dept, title=title)
             messages.success(request, 'Должность добавлена')
         return redirect('admin_panel')
-
-    # GET: показываем форму
     return render(request, 'position_form.html', {
         'action': 'Добавить',
         'departments': Department.objects.all(),
@@ -617,7 +614,6 @@ def edit_position(request, pk):
     })
 
 
-
 def delete_position(request, pk):
     pos = get_object_or_404(Position, pk=pk)
     pos.delete()
@@ -630,12 +626,9 @@ def send_application(request):
     if request.method == 'POST':
         form = ApplicationForm(request.POST)
         if form.is_valid():
-            # Получаем данные из формы
             name = form.cleaned_data['name']
             email = form.cleaned_data['email']
             phone = form.cleaned_data['phone']
-
-            # Тема и текст письма
             subject = 'Новая заявка с сайта'
             message = f'''
             Поступила новая заявка:
@@ -649,7 +642,7 @@ def send_application(request):
                 subject,
                 message,
                 settings.DEFAULT_FROM_EMAIL,
-                [settings.ADMIN_EMAIL],  # Ваш email
+                [settings.ADMIN_EMAIL],
                 fail_silently=False,
             )
 
